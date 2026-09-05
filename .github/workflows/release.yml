@@ -1,0 +1,35 @@
+name: Build & Release
+
+# Compila il .dmg su GitHub e lo allega alla Release quando pushi un tag v*.
+# (avviabile anche a mano da Actions → Run workflow)
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # necessario per creare/aggiornare la Release
+
+jobs:
+  build-mac:
+    runs-on: macos-latest   # runner Apple Silicon: build arm64 + x64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & publish .dmg
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # niente firma Apple: non tentare la code-signing (app unsigned)
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac --publish always

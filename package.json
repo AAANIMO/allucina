@@ -4,6 +4,10 @@
   "description": "Allucina — luce da studio e proiezione per animosity.",
   "author": "Tommaso Ascari",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AAANIMO/allucina.git"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -31,6 +35,9 @@
     "directories": {
       "output": "release"
     },
+    "publish": [
+      { "provider": "github", "owner": "AAANIMO", "repo": "allucina" }
+    ],
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.graphics-design",
