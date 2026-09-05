@@ -4,10 +4,9 @@
 
 ### Turn a projector into a studio light.
 
-**Allucina** paints a full-screen black canvas with pure white shapes, text and
-generative patterns — then hides all the UI so what's left is *only* light and
-shadow to cast onto your subject. Built for photographers, performers and
-projection tinkerers.
+A full-screen black canvas with pure white shapes, text and generative patterns.
+Compose, then hide the UI — what's left is *only* light and shadow to cast onto
+your subject.
 
 *An [animosity](https://animosity.it) project.*
 
@@ -17,49 +16,34 @@ projection tinkerers.
 
 ---
 
+## ⬇️ Download
+
+**macOS**
+
+- 🍎 [**Apple Silicon (M1–M4)**](https://github.com/AAANIMO/allucina/releases/download/untagged-40117643209fef17107a/Allucina-1.0.1-arm64.dmg) — `Allucina-1.0.1-arm64.dmg`
+- 💻 [**Intel**](https://github.com/AAANIMO/allucina/releases/download/untagged-40117643209fef17107a/Allucina-1.0.1.dmg) — `Allucina-1.0.1.dmg`
+
+Open the `.dmg` and drag **Allucina** into Applications. It's unsigned — on first
+launch **right-click → Open**.
+
+**🪟 Windows** — coming soon.
+
 ## ✨ What it does
 
-Compose on an infinite black canvas, then flip to **projection mode** — every
-panel disappears and you're left with a clean black-and-white image to project.
+- 🖤 **Projection-first** — black screen, zero UI. Press `E` to edit, `E` to project.
+- 🔷 **Shapes, gothic text, SVG & images** — plus black/white and per-object color.
+- 🌀 **Live generators** — spiral, stripes, star, lightning, rays, rings.
+- ♟️ **Tiling** — repeat any object across the screen.
+- ⚡ **Invert & strobe** — flip black/white instantly or on an interval.
+- 🔍 **Infinite, vector-crisp zoom** · 💾 **offline & auto-saving**.
 
-- 🖤 **Projection-first** — black screen, zero UI. Move the mouse for controls, or `E` to edit.
-- 🔷 **Shapes & gothic text** — rectangles, circles, polygons, blackletter type, plus imported SVG & images.
-- 🌀 **Parametric generators** — spiral, stripes, star, lightning, rays, rings, all tweakable live.
-- ♟️ **Tiling** — repeat any object across the screen with offsets and checker flips.
-- ⚡ **Invert & strobe** — flip black/white instantly (`I`) or automatically on an interval.
-- 🔍 **Infinite zoom/pan** — pinch & scroll, everything stays **vector-crisp** at any scale.
-- 💾 **Offline & auto-saving** — no server, no account; your work is always there.
-- 🖥️ **Runs anywhere** — native macOS app, installable PWA, or just open the folder.
+## 📖 Guide
 
-## 🚀 Install
-
-**Desktop app (macOS)** — grab the `.dmg` from the
-[**Releases**](https://github.com/AAANIMO/allucina/releases) page and drag
-Allucina into Applications.
-
-**From source:**
-```bash
-npm install && npm start      # 🪄 launch in a native window (Electron)
-npm run dist:mac              # 📦 build the .dmg into release/
-```
-
-**PWA (browser):**
-```bash
-python3 -m http.server 8000   # then open http://localhost:8000 → Install
-```
-
-## 📖 Learn more
-
-The full guide lives in the **[Wiki](../../wiki)** — [usage](../../wiki/Usage),
-[generators](../../wiki/Generators),
-[properties panel](../../wiki/Properties-panel),
-[shortcuts](../../wiki/Shortcuts), [install](../../wiki/Install) and
-[development](../../wiki/Development).
+Everything is documented in the **[Wiki](../../wiki)**.
 
 ## ❤️ Support
 
-Allucina is free and open source. If it's useful to you, you can
-[**buy me a coffee ☕**](https://buymeacoffee.com/animosity) — thank you!
+Free and open source. If it's useful, [**buy me a coffee ☕**](https://buymeacoffee.com/animosity).
 
 ## 📄 License
 
