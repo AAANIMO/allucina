@@ -52,6 +52,9 @@ Cambiare l'intervallo mentre è attivo lo riavvia subito col nuovo valore.
   selezionarla, comodo con molti oggetti sovrapposti. Le frecce **▲ / ▼** su
   ogni riga spostano l'oggetto **sopra / sotto** agli altri: l'ordine si
   aggiorna dal vivo sia nell'elenco che sul canvas.
+- **Colore**: colore del singolo oggetto (default bianco; **Bianco** ripristina).
+  Su forme/testo/SVG/generati è il colore di riempimento/tratto; sulle immagini
+  è una **tinta** (multiply). La luminosità scurisce il colore scelto.
 - **Luminosità**, **Opacità**, **Sfocatura bordi** (luce morbida).
 - **Flip H / Flip V** (specchia).
 - **Inverti colori (oggetto)**: inverte i colori del **singolo** oggetto

@@ -7,9 +7,16 @@ window.AUR = window.AUR || {};
   const WHITE = '#ffffff';
 
   // Proprietà custom da serializzare col progetto.
-  AUR.CUSTOM_PROPS = ['aureolaType', 'lum', 'blurAmt', 'objInvert', 'objBW',
+  AUR.CUSTOM_PROPS = ['aureolaType', 'lum', 'blurAmt', 'objInvert', 'objBW', 'color',
     'tileMode', 'tileGap', 'tileOffX', 'tileOffY', 'tileFlipAltH', 'tileFlipAltV',
     'genType', 'genParams', 'isTileLayer', 'tileSourceId', 'uid'];
+
+  function hexToRgb(hex) {
+    hex = (hex || '#ffffff').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function (c) { return c + c; }).join('');
+    const n = parseInt(hex, 16) || 0;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
 
   let _uid = 1;
   AUR.nextUid = function () { return 'o' + (_uid++) + '_' + Date.now().toString(36); };
@@ -208,6 +215,28 @@ window.AUR = window.AUR || {};
     }
   };
 
+  // ---- Colore dell'oggetto ----
+  // Vettori: colore di riempimento/tratto (scurito dalla luminosità).
+  // Immagini: tinta via filtro BlendColor (multiply); bianco = nessuna tinta.
+  AUR.setColor = function (o, hex) {
+    if (!o) return;
+    o.color = hex || '#ffffff';
+    if (o.type === 'image') {
+      const filters = (o.filters || []).filter(function (f) {
+        return !(f instanceof fabric.Image.filters.BlendColor);
+      });
+      if (o.color.toLowerCase() !== '#ffffff') {
+        filters.push(new fabric.Image.filters.BlendColor({ color: o.color, mode: 'multiply' }));
+      }
+      o.filters = filters;
+      o.applyFilters();
+      AUR.canvas.requestRenderAll();
+      if (o.tileMode) AUR.updateTile(o);
+    } else {
+      AUR.setLuminosity(o, o.lum != null ? o.lum : 1);
+    }
+  };
+
   // ---- Bianco e nero (immagini): filtro Grayscale ----
   AUR.setObjectBW = function (o, on) {
     if (!o || o.type !== 'image') return;
@@ -254,9 +283,11 @@ window.AUR = window.AUR || {};
       o.filters = filters;
       o.applyFilters();
     } else {
-      let g = Math.round(v * 255);
-      if (o.objInvert) g = 255 - g; // inversione selettiva: bianco↔nero
-      const col = 'rgb(' + g + ',' + g + ',' + g + ')';
+      // Colore base × luminosità, poi eventuale inversione. Bianco = grigio.
+      const base = hexToRgb(o.color || '#ffffff');
+      let rr = Math.round(base.r * v), gg = Math.round(base.g * v), bb = Math.round(base.b * v);
+      if (o.objInvert) { rr = 255 - rr; gg = 255 - gg; bb = 255 - bb; }
+      const col = 'rgb(' + rr + ',' + gg + ',' + bb + ')';
       if (o._objects && o._objects.length) o._objects.forEach(function (s) { if (s.fill && s.fill !== 'transparent') s.set('fill', col); if (s.stroke) s.set('stroke', col); });
       else { if (o.fill) o.set('fill', col); if (o.stroke) o.set('stroke', col); }
     }

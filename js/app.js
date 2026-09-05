@@ -140,6 +140,18 @@ window.AUR = window.AUR || {};
       $(id).addEventListener('change', AUR.emitChange);
     });
 
+    $('pColor').addEventListener('input', function () {
+      const o = activeObj(); if (!o) return;
+      AUR.setColor(o, $('pColor').value);
+    });
+    $('pColor').addEventListener('change', AUR.emitChange);
+    $('pColorReset').addEventListener('click', function () {
+      const o = activeObj(); if (!o) return;
+      $('pColor').value = '#ffffff';
+      AUR.setColor(o, '#ffffff');
+      AUR.emitChange();
+    });
+
     $('pFlipX').addEventListener('click', function () { AUR.flip('x'); });
     $('pFlipY').addEventListener('click', function () { AUR.flip('y'); });
 
@@ -236,6 +248,7 @@ window.AUR = window.AUR || {};
     $('pOpacity').value = o.opacity != null ? o.opacity : 1;
     $('pLum').value = o.lum != null ? o.lum : 1;
     $('pBlur').value = o.blurAmt || 0;
+    $('pColor').value = o.color || '#ffffff';
     $('pObjInvert').checked = !!o.objInvert;
     $('pBWRow').hidden = (o.type !== 'image');
     $('pObjBW').checked = !!o.objBW;
