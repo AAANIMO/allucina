@@ -75,8 +75,10 @@ Cambiare l'intervallo mentre è attivo lo riavvia subito col nuovo valore.
 ### Generatori parametrici
 Riempiono lo schermo e restano oggetti normali (spostabili, scalabili,
 piastrellabili). Regola i parametri nel pannello e premi **Rigenera**.
-- **Spirale** — forma **piena** (nastro solido), con giri, spessore, numero di
-  **bracci** (rotazioni equidistanti) e rotazione.
+- **Spirale** — **logaritmica** (parte da un punto e cresce in modo
+  esponenziale, auto-simile), nastro **pieno**. Parametri: giri, **crescita**
+  (ingrandimento per giro), spessore, numero di **bracci** (rotazioni
+  equidistanti) e rotazione.
 - **Righe** — barre piene che riempiono lo schermo, con numero, spessore e
   rotazione.
 - **Fulmini**, **Raggi**, **Anelli**.

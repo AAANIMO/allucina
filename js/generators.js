@@ -32,35 +32,44 @@ window.AUR = window.AUR || {};
       label: 'Spirale',
       params: [
         { key: 'turns', label: 'Giri', min: 1, max: 14, step: 0.5, default: 5 },
+        { key: 'growth', label: 'Crescita', min: 1.1, max: 4, step: 0.05, default: 1.6 },
         { key: 'thickness', label: 'Spessore', min: 0.05, max: 1, step: 0.05, default: 0.45 },
         { key: 'arms', label: 'Bracci', min: 1, max: 8, step: 1, default: 1 },
         { key: 'rotation', label: 'Rotazione', min: 0, max: 360, step: 5, default: 0 }
       ],
-      // Spirale PIENA: banda solida di larghezza regolabile ottenuta scostando
-      // il bordo di ±w/2 lungo la normale alla curva. Più bracci = più
-      // rotazioni equidistanti (effetto girandola).
+      // Spirale LOGARITMICA (non archimedea): r = r0 · e^(k·θ), il raggio cresce
+      // in modo esponenziale, quindi la spirale è auto-simile e il passo tra i
+      // giri aumenta col raggio. "Crescita" = fattore di ingrandimento per giro.
+      // Banda PIENA: il bordo è scostato di ±w/2 lungo la normale, con w che
+      // scala col raggio locale così il riempimento resta costante.
       build: function (p, S) {
         const R = S / 2;
-        const maxTheta = Math.PI * 2 * p.turns;
-        const b = R / maxTheta;
-        const pitch = Math.PI * 2 * b;                 // passo radiale per giro
-        const w = Math.max(2, p.thickness * pitch);    // spessore della banda
+        const turns = Math.max(0.5, p.turns);
+        const growth = Math.max(1.05, p.growth || 1.6); // ingrandimento per giro
+        const k = Math.log(growth) / (Math.PI * 2);     // tasso di crescita
+        const maxTheta = Math.PI * 2 * turns;
+        const r0 = R / Math.pow(growth, turns);         // raggio al centro
         const arms = Math.max(1, Math.round(p.arms));
         const rot0 = (p.rotation || 0) * Math.PI / 180;
-        const steps = Math.max(140, Math.floor(p.turns * 90));
+        const steps = Math.max(180, Math.floor(turns * 110));
         let d = '';
         for (let a = 0; a < arms; a++) {
           const off = rot0 + a * (Math.PI * 2 / arms);
           const outer = [], inner = [];
           for (let i = 0; i <= steps; i++) {
             const th = maxTheta * (i / steps);
-            const rr = b * th;
+            const rr = r0 * Math.exp(k * th);
             const ang = th + off;
             const ca = Math.cos(ang), sa = Math.sin(ang);
-            // tangente d/dθ → normale (perpendicolare) per lo scostamento
-            let tx = ca - th * sa, ty = sa + th * ca;
+            // tangente della spirale log: dP/dθ = r·(k·cos−sin, k·sin+cos)
+            let tx = k * ca - sa, ty = k * sa + ca;
             const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
             const nx = -ty, ny = tx;
+            // passo radiale verso il giro interno (il più stretto): usarlo per
+            // lo spessore evita l'overlap, così i giri restano distinti anche
+            // con crescita alta. thickness=1 → i giri si toccano appena.
+            const localPitch = rr * (1 - 1 / growth);
+            const w = Math.max(2, p.thickness * localPitch);
             const px = rr * ca, py = rr * sa;
             outer.push({ x: px + nx * w / 2, y: py + ny * w / 2 });
             inner.push({ x: px - nx * w / 2, y: py - ny * w / 2 });
