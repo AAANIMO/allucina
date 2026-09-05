@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Stato locale runtime (l'autosave vive in localStorage del browser)
+*.log

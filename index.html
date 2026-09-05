@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Aureola</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="mode-projection">
+
+  <!-- Canvas di proiezione -->
+  <canvas id="stage"></canvas>
+
+  <!-- Pulsante Edit flottante (nascosto fino all'hover in proiezione) -->
+  <button id="editToggle" class="edit-toggle" title="Modifica (E)">Edit</button>
+
+  <!-- Barra strumenti superiore (solo in edit) -->
+  <div id="toolbar" class="toolbar chrome">
+    <div class="tb-group">
+      <span class="tb-label">Forme</span>
+      <button data-add="rect" title="Rettangolo">▭</button>
+      <button data-add="circle" title="Cerchio">●</button>
+      <button data-add="ellipse" title="Ellisse">⬮</button>
+      <button data-add="triangle" title="Triangolo">▲</button>
+      <button data-add="bar" title="Barra / linea">▬</button>
+      <button data-add="cross" title="Croce">✚</button>
+      <button data-add="star" title="Stella">★</button>
+    </div>
+    <div class="tb-group">
+      <span class="tb-label">Crea</span>
+      <button id="btnText" title="Testo gotico">𝕬 Testo</button>
+      <button id="btnVertex" title="Forma dai vertici">◇ Vertici</button>
+      <button id="btnSvg" title="Importa SVG">↥ SVG</button>
+      <button id="btnImg" title="Importa immagine">↥ Img</button>
+    </div>
+    <div class="tb-group">
+      <span class="tb-label">Generatori</span>
+      <button data-gen="spiral" title="Spirale piena">◠ Spirale</button>
+      <button data-gen="stripes" title="Righe">▤ Righe</button>
+      <button data-gen="lightning" title="Fulmini">⚡ Fulmini</button>
+      <button data-gen="rays" title="Raggi">✳ Raggi</button>
+      <button data-gen="rings" title="Cerchi concentrici">◎ Anelli</button>
+    </div>
+    <div class="tb-spacer"></div>
+    <div class="tb-group">
+      <button id="btnFullscreen" title="Schermo intero (F)">⛶</button>
+      <button id="btnDone" title="Esci dalla modifica (E)">Fatto ✓</button>
+    </div>
+  </div>
+
+  <!-- Pannello proprietà oggetto selezionato (solo in edit) -->
+  <aside id="inspector" class="inspector chrome">
+    <div class="insp-empty" id="inspEmpty">Nessun oggetto selezionato.<br /><small>Aggiungi una forma o selezionane una.</small></div>
+
+    <div class="insp-body" id="inspBody" hidden>
+      <h3 id="objName">Oggetto</h3>
+
+      <label class="row">Luminosità
+        <input type="range" id="pLum" min="0" max="1" step="0.01" value="1" />
+      </label>
+      <label class="row">Opacità
+        <input type="range" id="pOpacity" min="0" max="1" step="0.01" value="1" />
+      </label>
+      <label class="row">Sfocatura bordi
+        <input type="range" id="pBlur" min="0" max="0.6" step="0.01" value="0" />
+      </label>
+
+      <div class="row btns">
+        <button id="pFlipX" title="Specchia orizzontale">⇋ Flip H</button>
+        <button id="pFlipY" title="Specchia verticale">⇅ Flip V</button>
+      </div>
+
+      <hr />
+      <label class="row toggle">
+        <input type="checkbox" id="pTile" /> Piastrella (ripeti su tutto)
+      </label>
+      <label class="row" id="pGapRow" hidden>Spaziatura
+        <input type="range" id="pGap" min="0" max="400" step="1" value="0" />
+      </label>
+
+      <hr />
+      <div class="row btns">
+        <button id="pDup" title="Duplica (⌘D)">⧉ Duplica</button>
+        <button id="pDel" class="danger" title="Elimina (⌫)">🗑 Elimina</button>
+      </div>
+      <div class="row btns">
+        <button id="pBack" title="Manda dietro">⤓ Dietro</button>
+        <button id="pFront" title="Porta avanti">⤒ Avanti</button>
+      </div>
+    </div>
+
+    <!-- Testo (compare quando è selezionata una scritta) -->
+    <div class="insp-body" id="textParams" hidden>
+      <h3>Testo</h3>
+      <textarea id="pText" class="text-area" rows="2" placeholder="Scrivi qui…"></textarea>
+      <label class="row col">Font gotico
+        <select id="pFont" class="select"></select>
+      </label>
+      <label class="row">Dimensione
+        <input type="range" id="pFontSize" min="10" max="500" step="1" value="130" />
+      </label>
+    </div>
+
+    <!-- Parametri generatore (compare dopo aver generato / selezionato un generato) -->
+    <div class="insp-body" id="genParams" hidden>
+      <h3 id="genTitle">Generatore</h3>
+      <div id="genControls"></div>
+      <div class="row btns">
+        <button id="genApply">Rigenera</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Barra file in basso a sinistra (solo in edit) -->
+  <div id="filebar" class="filebar chrome">
+    <button id="btnNew" title="Nuovo (svuota)">Nuovo</button>
+    <button id="btnExport" title="Esporta progetto">Esporta</button>
+    <button id="btnImport" title="Importa progetto">Importa</button>
+    <span id="hint" class="hint"></span>
+  </div>
+
+  <!-- Suggerimento vertici -->
+  <div id="vertexHint" class="vertex-hint" hidden>
+    Clicca per aggiungere vertici · <b>Invio</b>/doppio-click per chiudere · <b>Esc</b> per annullare
+  </div>
+
+  <!-- Input file nascosti -->
+  <input type="file" id="fileSvg" accept=".svg,image/svg+xml" hidden />
+  <input type="file" id="fileImg" accept="image/*" hidden />
+  <input type="file" id="fileProject" accept=".json,application/json" hidden />
+
+  <!-- Libreria vendorizzata (offline) -->
+  <script src="vendor/fabric.min.js"></script>
+  <!-- Moduli Aureola -->
+  <script src="js/viewport.js"></script>
+  <script src="js/objects.js"></script>
+  <script src="js/tiling.js"></script>
+  <script src="js/polygon.js"></script>
+  <script src="js/generators.js"></script>
+  <script src="js/persistence.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
