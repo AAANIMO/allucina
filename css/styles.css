@@ -483,3 +483,19 @@ body.splash-done #splash { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .splash-crest, .splash-title, .splash-sub, .splash-actions { animation-duration: 1ms; animation-delay: 0ms; }
 }
+
+/* pulsante help/guide sotto lo splash (stile testuale discreto) */
+.splash-link {
+  margin-top: 22px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: color 140ms ease;
+  animation: splashIn 700ms ease 2500ms both;
+}
+.splash-link:hover { color: var(--text); background: none; text-decoration: underline; text-underline-offset: 4px; }
