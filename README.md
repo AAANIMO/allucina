@@ -14,7 +14,7 @@ server o installazione: Fabric.js è già incluso in `vendor/`.
   compare il pulsante **Edit** in basso a destra (o premi `E`).
 - In **modalità modifica** appaiono la toolbar in alto, il pannello proprietà a
   destra, la barra file in basso e il titolo **animosity - aureola** (font
-  gotico) in alto a destra. Premi **Fatto ✓** (o `E`) per tornare a proiettare:
+  gotico) in alto a sinistra. Premi **Fatto ✓** (o `E`) per tornare a proiettare:
   sparisce tutto, resta solo la composizione.
 
 ### Gesture trackpad (Apple)

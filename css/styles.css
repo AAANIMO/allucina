@@ -105,18 +105,22 @@ body.inverted .vertex-hint {
   filter: invert(1); /* doppia inversione = i pannelli restano leggibili */
 }
 
-/* ===== Titolo app (in alto a destra, font gotico, solo in edit) ===== */
+/* ===== Titolo app (in alto a sinistra, font gotico, solo in edit) ===== */
 .app-title {
   position: fixed;
-  top: 16px;
-  right: 20px;
+  top: 0;
+  left: 0;
   z-index: 45;
+  padding: 18px 56px 48px 22px;
   font-family: 'UnifrakturMaguntia', serif;
   font-size: 30px;
   line-height: 1;
   text-transform: lowercase;
   color: var(--text);
   pointer-events: none;
+  /* sfumatura nera dietro il titolo per la leggibilità su qualsiasi sfondo */
+  background: radial-gradient(100% 150% at 26% 26%,
+    rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.82) 46%, rgba(0, 0, 0, 0.4) 68%, rgba(0, 0, 0, 0) 85%);
 }
 body.mode-edit .app-title.chrome { opacity: 0.85; }
 
