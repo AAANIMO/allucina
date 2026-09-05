@@ -37,6 +37,7 @@ window.ALL = window.ALL || {};
     wireKeyboard();
     wireActivity();
     wireSplash();
+    wireClear();
 
     ALL.loadAutosave(function () { setMode(false); });
   }
@@ -56,12 +57,37 @@ window.ALL = window.ALL || {};
     setTimeout(function () { document.body.classList.add('splash-done'); }, 520);
   }
 
+  // Torna allo splash (dal pulsante Exit): esce dalla modifica e lo rimostra.
+  function returnToSplash() {
+    setMode(false);
+    const s = $('splash');
+    if (!s) return;
+    document.body.classList.remove('splash-done');
+    s.classList.remove('hide');
+  }
+
   function wireSplash() {
     const start = $('splashStart');
     if (start) start.addEventListener('click', dismissSplash);
-    document.querySelectorAll('#splash [data-url]').forEach(function (b) {
+    const exit = $('exitFloat');
+    if (exit) exit.addEventListener('click', returnToSplash);
+    // Tutti i pulsanti con data-url aprono il link esterno (splash + "?" flottante).
+    document.querySelectorAll('[data-url]').forEach(function (b) {
       b.addEventListener('click', function () { openExternal(b.dataset.url); });
     });
+  }
+
+  // ---------- Clear canvas (con conferma in inglese) ----------
+  function wireClear() {
+    const modal = $('clearModal');
+    const open = function () { if (modal) modal.hidden = false; };
+    const close = function () { if (modal) modal.hidden = true; };
+    on('btnClear', 'click', open);
+    on('clearCancel', 'click', close);
+    on('clearConfirm', 'click', function () { close(); ALL.newProject(); });
+    on('clearExport', 'click', function () { ALL.exportProject(); close(); ALL.newProject(); });
+    // click sullo sfondo della modale = annulla
+    if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
   }
 
   // ---------- Modalità ----------
@@ -297,7 +323,7 @@ window.ALL = window.ALL || {};
 
   function buildGenControls(o) {
     const g = ALL.Generators[o.genType];
-    $('genTitle').textContent = 'Generatore · ' + g.label;
+    $('genTitle').textContent = 'Generator · ' + g.label;
     const box = $('genControls');
     box.innerHTML = '';
     const params = o.genParams || ALL.genDefaults(o.genType);
@@ -343,7 +369,7 @@ window.ALL = window.ALL || {};
     if (!objs.length) {
       const empty = document.createElement('div');
       empty.className = 'obj-list-empty';
-      empty.textContent = 'Nessun oggetto in scena.';
+      empty.textContent = 'No objects in scene.';
       listEl.appendChild(empty);
       return;
     }
@@ -358,8 +384,8 @@ window.ALL = window.ALL || {};
         '<span class="oli-name"></span>' +
         '<span class="oli-idx"></span>' +
         '<span class="oli-z">' +
-          '<button class="oli-up" title="Porta sopra">▲</button>' +
-          '<button class="oli-down" title="Manda sotto">▼</button>' +
+          '<button class="oli-up" title="Bring forward">▲</button>' +
+          '<button class="oli-down" title="Send backward">▼</button>' +
         '</span>';
       row.querySelector('.oli-name').textContent = niceName(o);
       row.querySelector('.oli-idx').textContent = String(objs.length - i);
@@ -391,11 +417,11 @@ window.ALL = window.ALL || {};
   function niceName(o) {
     if (o.genType && ALL.Generators[o.genType]) return ALL.Generators[o.genType].label;
     const map = {
-      rect: 'Rettangolo', circle: 'Cerchio', ellipse: 'Ellisse', triangle: 'Triangolo',
-      bar: 'Barra', cross: 'Croce', star: 'Stella', polygon: 'Poligono',
-      svg: 'SVG', image: 'Immagine', text: 'Testo'
+      rect: 'Rectangle', circle: 'Circle', ellipse: 'Ellipse', triangle: 'Triangle',
+      bar: 'Bar', cross: 'Cross', star: 'Star', polygon: 'Polygon',
+      svg: 'SVG', image: 'Image', text: 'Text'
     };
-    return map[o.allucinaType] || 'Oggetto';
+    return map[o.allucinaType] || 'Object';
   }
 
   // ---------- File ----------
@@ -450,6 +476,9 @@ window.ALL = window.ALL || {};
   function wireKeyboard() {
     window.addEventListener('keydown', function (e) {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      // Modale clear aperta: Esc chiude, il resto è ignorato.
+      const cm = $('clearModal');
+      if (cm && !cm.hidden) { if (e.key === 'Escape') cm.hidden = true; return; }
       if (ALL.isVertexMode()) return; // Esc/Enter gestiti dal tool vertici
 
       const k = e.key;

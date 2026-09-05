@@ -1,5 +1,5 @@
 /* Service worker Allucina — cache dell'app shell per uso offline */
-const CACHE = 'allucina-v2';
+const CACHE = 'allucina-v3';
 const ASSETS = [
   './',
   './index.html',

@@ -29,13 +29,13 @@ window.ALL = window.ALL || {};
   ALL.Generators = {
 
     spiral: {
-      label: 'Spirale',
+      label: 'Spiral',
       params: [
-        { key: 'turns', label: 'Giri', min: 1, max: 14, step: 0.5, default: 5 },
-        { key: 'growth', label: 'Crescita', min: 1.1, max: 4, step: 0.05, default: 1.6 },
-        { key: 'thickness', label: 'Spessore', min: 0.05, max: 1, step: 0.05, default: 0.45 },
-        { key: 'arms', label: 'Bracci', min: 1, max: 8, step: 1, default: 1 },
-        { key: 'rotation', label: 'Rotazione', min: 0, max: 360, step: 5, default: 0 }
+        { key: 'turns', label: 'Turns', min: 1, max: 14, step: 0.5, default: 5 },
+        { key: 'growth', label: 'Growth', min: 1.1, max: 4, step: 0.05, default: 1.6 },
+        { key: 'thickness', label: 'Thickness', min: 0.05, max: 1, step: 0.05, default: 0.45 },
+        { key: 'arms', label: 'Arms', min: 1, max: 8, step: 1, default: 1 },
+        { key: 'rotation', label: 'Rotation', min: 0, max: 360, step: 5, default: 0 }
       ],
       // Spirale LOGARITMICA (non archimedea): r = r0 · e^(k·θ), il raggio cresce
       // in modo esponenziale, quindi la spirale è auto-simile e il passo tra i
@@ -84,12 +84,12 @@ window.ALL = window.ALL || {};
     },
 
     lightning: {
-      label: 'Fulmini',
+      label: 'Lightning',
       params: [
-        { key: 'bolts', label: 'Numero', min: 1, max: 10, step: 1, default: 3 },
-        { key: 'jaggedness', label: 'Caoticità', min: 0.05, max: 1, step: 0.05, default: 0.5 },
-        { key: 'branches', label: 'Ramificazioni', min: 0, max: 8, step: 1, default: 2 },
-        { key: 'thickness', label: 'Spessore', min: 1, max: 20, step: 1, default: 3 }
+        { key: 'bolts', label: 'Count', min: 1, max: 10, step: 1, default: 3 },
+        { key: 'jaggedness', label: 'Chaos', min: 0.05, max: 1, step: 0.05, default: 0.5 },
+        { key: 'branches', label: 'Branches', min: 0, max: 8, step: 1, default: 2 },
+        { key: 'thickness', label: 'Thickness', min: 1, max: 20, step: 1, default: 3 }
       ],
       build: function (p, S) {
         const top = -S / 2, bottom = S / 2, span = S;
@@ -116,10 +116,10 @@ window.ALL = window.ALL || {};
     },
 
     rays: {
-      label: 'Raggi',
+      label: 'Rays',
       params: [
-        { key: 'count', label: 'Numero', min: 4, max: 120, step: 1, default: 24 },
-        { key: 'thickness', label: 'Spessore', min: 1, max: 20, step: 1, default: 3 }
+        { key: 'count', label: 'Count', min: 4, max: 120, step: 1, default: 24 },
+        { key: 'thickness', label: 'Thickness', min: 1, max: 20, step: 1, default: 3 }
       ],
       build: function (p, S) {
         const R = S / 2;
@@ -133,10 +133,10 @@ window.ALL = window.ALL || {};
     },
 
     rings: {
-      label: 'Anelli',
+      label: 'Rings',
       params: [
-        { key: 'count', label: 'Numero', min: 2, max: 40, step: 1, default: 8 },
-        { key: 'thickness', label: 'Spessore', min: 1, max: 20, step: 1, default: 3 }
+        { key: 'count', label: 'Count', min: 2, max: 40, step: 1, default: 8 },
+        { key: 'thickness', label: 'Thickness', min: 1, max: 20, step: 1, default: 3 }
       ],
       build: function (p, S) {
         const R = S / 2;
@@ -151,11 +151,11 @@ window.ALL = window.ALL || {};
     },
 
     stripes: {
-      label: 'Righe',
+      label: 'Stripes',
       params: [
-        { key: 'count', label: 'Numero', min: 2, max: 60, step: 1, default: 12 },
-        { key: 'thickness', label: 'Spessore', min: 0.05, max: 0.95, step: 0.05, default: 0.5 },
-        { key: 'rotation', label: 'Rotazione', min: 0, max: 180, step: 5, default: 0 }
+        { key: 'count', label: 'Count', min: 2, max: 60, step: 1, default: 12 },
+        { key: 'thickness', label: 'Thickness', min: 0.05, max: 0.95, step: 0.05, default: 0.5 },
+        { key: 'rotation', label: 'Rotation', min: 0, max: 180, step: 5, default: 0 }
       ],
       // Righe piene (barre) che riempiono lo schermo, con rotazione.
       build: function (p, S) {
@@ -176,12 +176,12 @@ window.ALL = window.ALL || {};
     },
 
     star: {
-      label: 'Stella',
+      label: 'Star',
       params: [
-        { key: 'points', label: 'Punte', min: 3, max: 24, step: 1, default: 5 },
+        { key: 'points', label: 'Points', min: 3, max: 24, step: 1, default: 5 },
         // distanza delle punte INTERNE dal centro, come frazione del raggio esterno
-        { key: 'inner', label: 'Punte interne', min: 0.1, max: 0.9, step: 0.02, default: 0.42 },
-        { key: 'rotation', label: 'Rotazione', min: 0, max: 360, step: 5, default: 0 }
+        { key: 'inner', label: 'Inner points', min: 0.1, max: 0.9, step: 0.02, default: 0.42 },
+        { key: 'rotation', label: 'Rotation', min: 0, max: 360, step: 5, default: 0 }
       ],
       // Stella piena a n punte: alterna raggio esterno R e interno R·inner.
       build: function (p, S) {

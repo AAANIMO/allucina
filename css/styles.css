@@ -44,12 +44,17 @@ html, body {
 /* ---- Cursore nascosto quando si proietta e non c'è attività ---- */
 body.mode-projection:not(.active) { cursor: none; }
 
-/* ===== Pulsante Edit flottante ===== */
-.edit-toggle {
+/* ===== Pulsanti flottanti (Auto · Invert · Edit · ? · Exit) ===== */
+#floatBtns {
   position: fixed;
   right: 18px;
   bottom: 18px;
   z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.edit-toggle {
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 600;
@@ -68,8 +73,13 @@ body.mode-projection:not(.active) { cursor: none; }
 }
 .edit-toggle:hover { background: rgba(40, 40, 46, 0.95); }
 
-.invert-toggle-float { right: 84px; }
-.auto-invert-toggle-float { right: 158px; }
+/* pulsante "?" tondo per la guida */
+.help-float {
+  width: 40px;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: 700;
+}
 
 .tb-rate,
 .tb-star {
@@ -98,7 +108,7 @@ body.mode-projection:not(.active) { cursor: none; }
 /* In proiezione: appare solo quando c'è attività del mouse */
 body.mode-projection.active .edit-toggle { opacity: 1; transform: translateY(0); pointer-events: auto; }
 /* In edit i pulsanti flottanti non servono (c'è la toolbar) */
-body.mode-edit .edit-toggle { display: none; }
+body.mode-edit #floatBtns { display: none; }
 
 /* ===== Inversione colori (tutto lo schermo, chrome escluso) ===== */
 body.inverted { filter: invert(1); }
@@ -499,3 +509,33 @@ body.splash-done #splash { display: none; }
   animation: splashIn 700ms ease 2500ms both;
 }
 .splash-link:hover { color: var(--text); background: none; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ===== Modale (conferma clear canvas) ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.modal-overlay[hidden] { display: none; }
+.modal-card {
+  width: min(380px, calc(100vw - 40px));
+  padding: 22px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.modal-card h3 { margin: 0 0 8px; font-size: 17px; }
+.modal-card p { margin: 0 0 18px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.modal-actions { display: flex; flex-direction: column; gap: 8px; }
+.modal-btn { width: 100%; text-align: center; padding: 10px 14px; font-size: 14px; }
+.modal-btn.ghost { background: none; border-color: transparent; color: var(--muted); }
+.modal-btn.ghost:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
+.modal-btn.danger { color: var(--danger); border-color: rgba(255, 107, 107, 0.4); }
+.modal-btn.danger:hover { background: rgba(255, 107, 107, 0.12); }

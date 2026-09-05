@@ -1,20 +1,20 @@
 # Allucina — Wiki
 
-Canvas nero a tutto schermo per usare un **proiettore come luce da studio**.
-Un progetto [animosity](https://animosity.it).
+A full-screen black canvas that turns a **projector into a studio light**.
+An [animosity](https://animosity.it) project.
 
-## Indice
+## Contents
 
-- **[Uso](Uso)** — modalità proiezione/modifica, gesture, forme, testo, inversione
-- **[Generatori](Generatori)** — spirale, righe, stella, fulmini, raggi, anelli e i loro parametri
-- **[Pannello proprietà](Pannello-proprieta)** — colore, luminosità, opacità, blur, flip, piastrella, ordine Z
-- **[Scorciatoie](Scorciatoie)** — tutti i tasti
-- **[Installazione](Installazione)** — app desktop (Electron), PWA, release via GitHub Actions
-- **[Sviluppo](Sviluppo)** — struttura del progetto ed estensione dei generatori
+- **[Usage](Usage)** — projection/edit modes, gestures, shapes, text, invert
+- **[Generators](Generators)** — spiral, stripes, star, lightning, rays, rings and their parameters
+- **[Properties panel](Properties-panel)** — color, brightness, opacity, blur, flip, tile, Z-order
+- **[Shortcuts](Shortcuts)** — every key
+- **[Install](Install)** — desktop app (Electron), PWA, releases via GitHub Actions
+- **[Development](Development)** — project structure and extending the generators
 
-## In breve
+## In short
 
-All'avvio compare lo **splash** con il logo animosity → **start allucina »**.
-Poi sei in **proiezione** (schermo nero): muovi il mouse e premi **Edit** (`E`)
-per comporre; **Fatto ✓** per tornare a proiettare. `I` inverte i colori.
-Tutto è vettoriale, offline e con autosave.
+On launch the **splash** shows the animosity logo → **start allucina »**.
+Then you're in **projection** (black screen): move the mouse and press **Edit**
+(`E`) to compose; **Done ✓** to go back to projecting. `I` inverts colors.
+Everything is vector, offline and auto-saved.
