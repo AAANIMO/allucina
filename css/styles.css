@@ -68,10 +68,57 @@ body.mode-projection:not(.active) { cursor: none; }
 }
 .edit-toggle:hover { background: rgba(40, 40, 46, 0.95); }
 
+.invert-toggle-float { right: 84px; }
+.auto-invert-toggle-float { right: 158px; }
+
+.tb-rate {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--muted);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tb-rate input[type="number"] {
+  width: 46px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 5px 4px;
+  text-align: right;
+}
+
 /* In proiezione: appare solo quando c'è attività del mouse */
 body.mode-projection.active .edit-toggle { opacity: 1; transform: translateY(0); pointer-events: auto; }
-/* In edit il pulsante flottante non serve (c'è "Fatto") */
+/* In edit i pulsanti flottanti non servono (c'è la toolbar) */
 body.mode-edit .edit-toggle { display: none; }
+
+/* ===== Inversione colori (tutto lo schermo, chrome escluso) ===== */
+body.inverted { filter: invert(1); }
+body.inverted .chrome,
+body.inverted .edit-toggle,
+body.inverted .vertex-hint {
+  filter: invert(1); /* doppia inversione = i pannelli restano leggibili */
+}
+
+/* ===== Titolo app (in alto a destra, font gotico, solo in edit) ===== */
+.app-title {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 45;
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: 30px;
+  line-height: 1;
+  text-transform: lowercase;
+  color: var(--text);
+  pointer-events: none;
+}
+body.mode-edit .app-title.chrome { opacity: 0.85; }
 
 /* ===== Chrome (toolbar, inspector, filebar) — visibile solo in edit ===== */
 .chrome {
@@ -228,6 +275,74 @@ body.mode-edit .inspector { transform: translateX(0); }
   backdrop-filter: blur(12px);
 }
 
+/* ===== Elenco oggetti (richiudibile) ===== */
+.obj-list-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  padding: 2px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.obj-list-toggle:hover { background: transparent; color: var(--accent); }
+.obj-count { color: var(--muted); font-weight: 400; font-size: 11px; }
+
+.obj-list {
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.obj-list.collapsed { display: none; }
+.obj-list-empty { color: var(--muted); font-size: 12px; padding: 4px 2px; }
+
+.obj-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.obj-list-item:hover { background: rgba(255, 255, 255, 0.10); }
+.obj-list-item.selected {
+  background: rgba(110, 168, 255, 0.18);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.obj-list-item .oli-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.obj-list-item .oli-idx { color: var(--muted); font-size: 10px; flex-shrink: 0; }
+
+/* Frecce z-order per riga */
+.oli-z { display: flex; gap: 2px; flex-shrink: 0; }
+.oli-z button {
+  padding: 1px 6px;
+  font-size: 11px;
+  line-height: 1.3;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--panel-border);
+  border-radius: 5px;
+  color: var(--text);
+}
+.oli-z button:hover { background: rgba(110, 168, 255, 0.30); }
+.oli-z button:disabled { opacity: 0.25; cursor: default; background: rgba(255, 255, 255, 0.04); }
+
+.insp-note { color: var(--muted); font-size: 11px; line-height: 1.4; margin: 10px 0 0; }
+
 /* Scrollbar discreta */
-.inspector::-webkit-scrollbar { width: 8px; }
-.inspector::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; }
+.inspector::-webkit-scrollbar,
+.obj-list::-webkit-scrollbar { width: 8px; }
+.inspector::-webkit-scrollbar-thumb,
+.obj-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; }

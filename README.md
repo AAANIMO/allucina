@@ -13,8 +13,9 @@ server o installazione: Fabric.js è già incluso in `vendor/`.
 - All'avvio sei in **modalità proiezione**: schermo nero. Muovi il mouse →
   compare il pulsante **Edit** in basso a destra (o premi `E`).
 - In **modalità modifica** appaiono la toolbar in alto, il pannello proprietà a
-  destra e la barra file in basso. Premi **Fatto ✓** (o `E`) per tornare a
-  proiettare: sparisce tutto, resta solo la composizione.
+  destra, la barra file in basso e il titolo **animosity - aureola** (font
+  gotico) in alto a destra. Premi **Fatto ✓** (o `E`) per tornare a proiettare:
+  sparisce tutto, resta solo la composizione.
 
 ### Gesture trackpad (Apple)
 - **Pinch** → zoom (centrato sul cursore) — infinito.
@@ -33,12 +34,43 @@ server o installazione: Fabric.js è già incluso in `vendor/`.
 - Selezionato un oggetto: trascina per spostarlo, maniglie **angolari** per
   scalare, maniglie **laterali** per stringere, maniglia in alto per **ruotare**.
 
+### Inverti colori
+Pulsante **◑ Inverti** in toolbar (o pulsante flottante accanto a Edit in
+proiezione, o tasto `I`): inverte i colori di **tutto lo schermo** — sfondo
+nero e forme bianche diventano sfondo bianco e forme nere. I pannelli
+dell'editor restano leggibili normalmente. Lo stato si salva con
+autosave/export come il resto del progetto.
+
+**Inverti automatico**: pulsante **⏱ Auto** in toolbar (o pulsante flottante
+in proiezione, o `Shift+I`) inverte i colori da solo a intervallo regolare —
+imposta i secondi (0.1–10) nel campo accanto. Utile come effetto strobo.
+Cambiare l'intervallo mentre è attivo lo riavvia subito col nuovo valore.
+
 ### Pannello proprietà
+- **Elenco oggetti**: sezione richiudibile in cima al pannello con tutti gli
+  oggetti in scena (dal più in alto nello z-order). Clicca una voce per
+  selezionarla, comodo con molti oggetti sovrapposti. Le frecce **▲ / ▼** su
+  ogni riga spostano l'oggetto **sopra / sotto** agli altri: l'ordine si
+  aggiorna dal vivo sia nell'elenco che sul canvas.
 - **Luminosità**, **Opacità**, **Sfocatura bordi** (luce morbida).
 - **Flip H / Flip V** (specchia).
-- **Piastrella**: ripete l'oggetto su tutto lo schermo (con spaziatura
-  regolabile) e resta allineato durante pan/zoom.
-- Duplica, Elimina, porta Avanti / Dietro.
+- **Inverti colori (oggetto)**: inverte i colori del **singolo** oggetto
+  (bianco↔nero), indipendente dall'inversione globale. Serve per comporre, es.
+  un cerchio nero su un quadrato bianco. Sulle immagini applica un filtro di
+  inversione.
+- **Bianco e nero (immagine)**: converte l'immagine selezionata in scala di
+  grigi (appare solo per le immagini).
+- **Piastrella**: ripete l'oggetto su tutto lo schermo, resta allineato
+  durante pan/zoom. Oltre a **Spaziatura**:
+  - **Offset righe (X)** / **Offset colonne (Y)**: sfalsa le righe/colonne
+    dispari (0–100%) — con offset 50% su X ottieni il classico pattern a
+    mattoncino.
+  - **Alterna Flip H / V**: specchia le tessere a scacchiera (una sì, una no)
+    per pattern che si incastrano.
+- Duplica, Elimina.
+- **Ordine (Z)**: si gestisce dall'elenco oggetti con le frecce ▲ / ▼ (vedi
+  sopra). Da tastiera: `[` / `]` un livello, `Shift+[` / `Shift+]` in
+  fondo / in primo piano.
 
 ### Generatori parametrici
 Riempiono lo schermo e restano oggetti normali (spostabili, scalabili,
@@ -58,11 +90,14 @@ piastrellabili). Regola i parametri nel pannello e premi **Rigenera**.
 | Tasto | Azione |
 |---|---|
 | `E` | Modifica ↔ Proiezione |
+| `I` | Inverti colori (tutto lo schermo) |
+| `Shift+I` | Inverti automatico on/off |
 | `F` | Schermo intero |
 | `⌫` / `Canc` | Elimina selezione |
 | `⌘/Ctrl + D` | Duplica |
 | Frecce | Sposta (con `Shift` = passo 10) |
-| `[` / `]` | Manda dietro / porta avanti |
+| `[` / `]` | Indietro / avanti di un livello |
+| `Shift+[` / `Shift+]` | Manda in fondo / porta in primo piano |
 | `Spazio` + trascina | Pan |
 | `Esc` | Deseleziona / annulla vertici |
 

@@ -7,7 +7,8 @@ window.AUR = window.AUR || {};
   const WHITE = '#ffffff';
 
   // Proprietà custom da serializzare col progetto.
-  AUR.CUSTOM_PROPS = ['aureolaType', 'lum', 'blurAmt', 'tileMode', 'tileGap',
+  AUR.CUSTOM_PROPS = ['aureolaType', 'lum', 'blurAmt', 'objInvert', 'objBW',
+    'tileMode', 'tileGap', 'tileOffX', 'tileOffY', 'tileFlipAltH', 'tileFlipAltV',
     'genType', 'genParams', 'isTileLayer', 'tileSourceId', 'uid'];
 
   let _uid = 1;
@@ -188,6 +189,39 @@ window.AUR = window.AUR || {};
     AUR.canvas.requestRenderAll();
   };
 
+  // ---- Inversione colori del singolo oggetto (es. cerchio nero su bianco) ----
+  AUR.setObjectInvert = function (o, on) {
+    if (!o) return;
+    o.objInvert = !!on;
+    if (o.type === 'image') {
+      const filters = (o.filters || []).filter(function (f) {
+        return !(f instanceof fabric.Image.filters.Invert);
+      });
+      if (on) filters.push(new fabric.Image.filters.Invert());
+      o.filters = filters;
+      o.applyFilters();
+      AUR.canvas.requestRenderAll();
+      if (o.tileMode) AUR.updateTile(o);
+    } else {
+      // Ri-applica il livello di grigio tenendo conto dell'inversione.
+      AUR.setLuminosity(o, o.lum != null ? o.lum : 1);
+    }
+  };
+
+  // ---- Bianco e nero (immagini): filtro Grayscale ----
+  AUR.setObjectBW = function (o, on) {
+    if (!o || o.type !== 'image') return;
+    o.objBW = !!on;
+    const filters = (o.filters || []).filter(function (f) {
+      return !(f instanceof fabric.Image.filters.Grayscale);
+    });
+    if (on) filters.push(new fabric.Image.filters.Grayscale());
+    o.filters = filters;
+    o.applyFilters();
+    AUR.canvas.requestRenderAll();
+    if (o.tileMode) AUR.updateTile(o);
+  };
+
   // ---- Flip / specchia ----
   AUR.flip = function (axis) {
     const o = AUR.canvas.getActiveObject();
@@ -220,7 +254,8 @@ window.AUR = window.AUR || {};
       o.filters = filters;
       o.applyFilters();
     } else {
-      const g = Math.round(v * 255);
+      let g = Math.round(v * 255);
+      if (o.objInvert) g = 255 - g; // inversione selettiva: bianco↔nero
       const col = 'rgb(' + g + ',' + g + ',' + g + ')';
       if (o._objects && o._objects.length) o._objects.forEach(function (s) { if (s.fill && s.fill !== 'transparent') s.set('fill', col); if (s.stroke) s.set('stroke', col); });
       else { if (o.fill) o.set('fill', col); if (o.stroke) o.set('stroke', col); }
@@ -278,12 +313,25 @@ window.AUR = window.AUR || {};
     AUR.emitChange();
   };
 
+  // dir: 'toFront' | 'toBack' (in cima/fondo a tutti) — 'front' | 'back' (un livello).
+  // Lavora sulla lista degli oggetti REALI (piastrelle escluse) e poi ricostruisce
+  // lo stack con restack: così lo z-order funziona anche per gli oggetti
+  // piastrellati (il layer di copie segue il master).
   AUR.zOrder = function (dir) {
     const o = AUR.canvas.getActiveObject();
-    if (!o) return;
-    if (dir === 'front') o.bringToFront();
-    else o.sendBackwards();
-    AUR.keepTilesAtBack();
+    if (!o || o.isTileLayer) return;
+    const reals = AUR.canvas.getObjects().filter(function (x) { return !x.isTileLayer; });
+    const i = reals.indexOf(o);
+    if (i < 0) return;
+    let j;
+    if (dir === 'front') j = Math.min(reals.length - 1, i + 1);
+    else if (dir === 'back') j = Math.max(0, i - 1);
+    else if (dir === 'toFront') j = reals.length - 1;
+    else j = 0;
+    if (j === i) return;
+    reals.splice(i, 1);
+    reals.splice(j, 0, o);
+    AUR.restack(reals);
     AUR.canvas.requestRenderAll();
     AUR.emitChange();
   };

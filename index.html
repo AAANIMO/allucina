@@ -11,7 +11,12 @@
   <!-- Canvas di proiezione -->
   <canvas id="stage"></canvas>
 
-  <!-- Pulsante Edit flottante (nascosto fino all'hover in proiezione) -->
+  <!-- Titolo app (solo in edit, font gotico) -->
+  <div id="appTitle" class="app-title chrome">animosity - aureola</div>
+
+  <!-- Pulsanti flottanti (nascosti fino all'hover in proiezione) -->
+  <button id="autoInvertToggleFloat" class="edit-toggle auto-invert-toggle-float" title="Inverti automaticamente (Shift+I)">⏱ Auto</button>
+  <button id="invertToggleFloat" class="edit-toggle invert-toggle-float" title="Inverti colori (I)">Inverti</button>
   <button id="editToggle" class="edit-toggle" title="Modifica (E)">Edit</button>
 
   <!-- Barra strumenti superiore (solo in edit) -->
@@ -43,6 +48,11 @@
     </div>
     <div class="tb-spacer"></div>
     <div class="tb-group">
+      <button id="btnInvert" title="Inverti colori (I)">◑ Inverti</button>
+      <label class="tb-rate" title="Intervallo inversione automatica (0.1–10 secondi)">
+        <input type="number" id="invertRate" min="0.1" max="10" step="0.1" value="1" />s
+      </label>
+      <button id="btnAutoInvert" title="Inverti automaticamente ogni N secondi (Shift+I)">⏱ Auto</button>
       <button id="btnFullscreen" title="Schermo intero (F)">⛶</button>
       <button id="btnDone" title="Esci dalla modifica (E)">Fatto ✓</button>
     </div>
@@ -50,6 +60,15 @@
 
   <!-- Pannello proprietà oggetto selezionato (solo in edit) -->
   <aside id="inspector" class="inspector chrome">
+    <!-- Elenco oggetti in scena: sempre disponibile, richiudibile -->
+    <div class="obj-list-section">
+      <button id="objListToggle" class="obj-list-toggle" title="Mostra/nascondi elenco oggetti">
+        <span id="objListArrow">▾</span> Oggetti <span id="objListCount" class="obj-count"></span>
+      </button>
+      <div id="objList" class="obj-list"></div>
+    </div>
+    <hr />
+
     <div class="insp-empty" id="inspEmpty">Nessun oggetto selezionato.<br /><small>Aggiungi una forma o selezionane una.</small></div>
 
     <div class="insp-body" id="inspBody" hidden>
@@ -69,24 +88,41 @@
         <button id="pFlipX" title="Specchia orizzontale">⇋ Flip H</button>
         <button id="pFlipY" title="Specchia verticale">⇅ Flip V</button>
       </div>
+      <label class="row toggle">
+        <input type="checkbox" id="pObjInvert" /> Inverti colori (oggetto)
+      </label>
+      <label class="row toggle" id="pBWRow" hidden>
+        <input type="checkbox" id="pObjBW" /> Bianco e nero (immagine)
+      </label>
 
       <hr />
       <label class="row toggle">
         <input type="checkbox" id="pTile" /> Piastrella (ripeti su tutto)
       </label>
-      <label class="row" id="pGapRow" hidden>Spaziatura
-        <input type="range" id="pGap" min="0" max="400" step="1" value="0" />
-      </label>
+      <div id="pTileParams" hidden>
+        <label class="row">Spaziatura
+          <input type="range" id="pGap" min="0" max="400" step="1" value="0" />
+        </label>
+        <label class="row">Offset righe (X)
+          <input type="range" id="pTileOffX" min="0" max="100" step="1" value="0" />
+        </label>
+        <label class="row">Offset colonne (Y)
+          <input type="range" id="pTileOffY" min="0" max="100" step="1" value="0" />
+        </label>
+        <label class="row toggle">
+          <input type="checkbox" id="pTileFlipH" /> Alterna Flip H (scacchiera)
+        </label>
+        <label class="row toggle">
+          <input type="checkbox" id="pTileFlipV" /> Alterna Flip V (scacchiera)
+        </label>
+      </div>
 
       <hr />
       <div class="row btns">
         <button id="pDup" title="Duplica (⌘D)">⧉ Duplica</button>
         <button id="pDel" class="danger" title="Elimina (⌫)">🗑 Elimina</button>
       </div>
-      <div class="row btns">
-        <button id="pBack" title="Manda dietro">⤓ Dietro</button>
-        <button id="pFront" title="Porta avanti">⤒ Avanti</button>
-      </div>
+      <p class="insp-note">Ordina gli oggetti (sopra/sotto) dall'elenco in alto.</p>
     </div>
 
     <!-- Testo (compare quando è selezionata una scritta) -->

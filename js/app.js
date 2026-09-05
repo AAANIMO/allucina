@@ -9,7 +9,7 @@ window.AUR = window.AUR || {};
   function $(id) { return document.getElementById(id); }
 
   function init() {
-    AUR.state = { editMode: false, spaceHeld: false };
+    AUR.state = { editMode: false, spaceHeld: false, inverted: false, autoInvert: false };
     AUR.applyControlTheme();
 
     AUR.canvas = new fabric.Canvas('stage', {
@@ -27,8 +27,11 @@ window.AUR = window.AUR || {};
     AUR.preloadFonts(); // font gotici pronti prima di scrivere
 
     wireModes();
+    wireInvert();
+    wireAutoInvert();
     wireToolbar();
     wireInspector();
+    wireObjectList();
     wireFiles();
     wireCanvasEvents();
     wireKeyboard();
@@ -58,6 +61,44 @@ window.AUR = window.AUR || {};
   function wireModes() {
     $('editToggle').addEventListener('click', function () { setMode(true); });
     $('btnDone').addEventListener('click', function () { setMode(false); });
+  }
+
+  // ---------- Inversione colori (tutto lo schermo) ----------
+  function setInvert(on) {
+    AUR.state.inverted = on;
+    document.body.classList.toggle('inverted', on);
+    $('btnInvert').classList.toggle('active', on);
+    AUR.emitChange();
+  }
+  AUR.setInvert = setInvert;
+
+  function wireInvert() {
+    $('btnInvert').addEventListener('click', function () { setInvert(!AUR.state.inverted); });
+    $('invertToggleFloat').addEventListener('click', function () { setInvert(!AUR.state.inverted); });
+  }
+
+  // ---------- Inverti automaticamente (strobo a intervallo regolabile) ----------
+  let autoInvertTimer = null;
+
+  function setAutoInvert(on) {
+    clearInterval(autoInvertTimer);
+    AUR.state.autoInvert = on;
+    $('btnAutoInvert').classList.toggle('active', on);
+    $('autoInvertToggleFloat').classList.toggle('active', on);
+    if (on) {
+      const sec = Math.max(0.1, Math.min(10, parseFloat($('invertRate').value) || 1));
+      autoInvertTimer = setInterval(function () { setInvert(!AUR.state.inverted); }, sec * 1000);
+    }
+  }
+  AUR.setAutoInvert = setAutoInvert;
+
+  function wireAutoInvert() {
+    $('btnAutoInvert').addEventListener('click', function () { setAutoInvert(!AUR.state.autoInvert); });
+    $('autoInvertToggleFloat').addEventListener('click', function () { setAutoInvert(!AUR.state.autoInvert); });
+    // Cambiare l'intervallo mentre è attivo lo riavvia con il nuovo valore.
+    $('invertRate').addEventListener('change', function () {
+      if (AUR.state.autoInvert) setAutoInvert(true);
+    });
   }
 
   // ---------- Attività mouse (chrome nascosto / cursore) ----------
@@ -102,11 +143,23 @@ window.AUR = window.AUR || {};
     $('pFlipX').addEventListener('click', function () { AUR.flip('x'); });
     $('pFlipY').addEventListener('click', function () { AUR.flip('y'); });
 
+    $('pObjInvert').addEventListener('change', function () {
+      const o = activeObj(); if (!o) return;
+      AUR.setObjectInvert(o, $('pObjInvert').checked);
+      AUR.emitChange();
+    });
+
+    $('pObjBW').addEventListener('change', function () {
+      const o = activeObj(); if (!o) return;
+      AUR.setObjectBW(o, $('pObjBW').checked);
+      AUR.emitChange();
+    });
+
     $('pTile').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
       if ($('pTile').checked) AUR.enableTile(o, parseFloat($('pGap').value) || 0);
       else AUR.removeTile(o);
-      $('pGapRow').hidden = !$('pTile').checked;
+      $('pTileParams').hidden = !$('pTile').checked;
       AUR.emitChange();
     });
     $('pGap').addEventListener('input', function () {
@@ -116,10 +169,30 @@ window.AUR = window.AUR || {};
     });
     $('pGap').addEventListener('change', AUR.emitChange);
 
+    ['pTileOffX', 'pTileOffY'].forEach(function (id) {
+      $(id).addEventListener('input', function () {
+        const o = activeObj(); if (!o) return;
+        const frac = parseFloat($(id).value) / 100;
+        if (id === 'pTileOffX') o.tileOffX = frac; else o.tileOffY = frac;
+        if (o.tileMode) AUR.updateTile(o);
+      });
+      $(id).addEventListener('change', AUR.emitChange);
+    });
+    $('pTileFlipH').addEventListener('change', function () {
+      const o = activeObj(); if (!o) return;
+      o.tileFlipAltH = $('pTileFlipH').checked;
+      if (o.tileMode) AUR.updateTile(o);
+      AUR.emitChange();
+    });
+    $('pTileFlipV').addEventListener('change', function () {
+      const o = activeObj(); if (!o) return;
+      o.tileFlipAltV = $('pTileFlipV').checked;
+      if (o.tileMode) AUR.updateTile(o);
+      AUR.emitChange();
+    });
+
     $('pDup').addEventListener('click', function () { AUR.duplicateSelected(); });
     $('pDel').addEventListener('click', function () { AUR.deleteSelected(); });
-    $('pBack').addEventListener('click', function () { AUR.zOrder('back'); });
-    $('pFront').addEventListener('click', function () { AUR.zOrder('front'); });
 
     $('genApply').addEventListener('click', applyGen);
 
@@ -154,6 +227,7 @@ window.AUR = window.AUR || {};
   }
 
   function updateInspector() {
+    renderObjectList();
     const o = activeObj();
     const empty = $('inspEmpty'), body = $('inspBody'), gen = $('genParams'), txt = $('textParams');
     if (!o || o.isTileLayer) { empty.hidden = false; body.hidden = true; gen.hidden = true; txt.hidden = true; return; }
@@ -162,9 +236,16 @@ window.AUR = window.AUR || {};
     $('pOpacity').value = o.opacity != null ? o.opacity : 1;
     $('pLum').value = o.lum != null ? o.lum : 1;
     $('pBlur').value = o.blurAmt || 0;
+    $('pObjInvert').checked = !!o.objInvert;
+    $('pBWRow').hidden = (o.type !== 'image');
+    $('pObjBW').checked = !!o.objBW;
     $('pTile').checked = !!o.tileMode;
-    $('pGapRow').hidden = !o.tileMode;
+    $('pTileParams').hidden = !o.tileMode;
     $('pGap').value = o.tileGap || 0;
+    $('pTileOffX').value = (o.tileOffX || 0) * 100;
+    $('pTileOffY').value = (o.tileOffY || 0) * 100;
+    $('pTileFlipH').checked = !!o.tileFlipAltH;
+    $('pTileFlipV').checked = !!o.tileFlipAltV;
 
     if (o.genType && AUR.Generators[o.genType]) { gen.hidden = false; buildGenControls(o); }
     else gen.hidden = true;
@@ -203,6 +284,71 @@ window.AUR = window.AUR || {};
     });
     AUR.regenerate(o, params);
     updateInspector();
+  }
+
+  // ---------- Elenco oggetti (selezione rapida, richiudibile) ----------
+  function wireObjectList() {
+    $('objListToggle').addEventListener('click', function () {
+      const collapsed = $('objList').classList.toggle('collapsed');
+      $('objListArrow').textContent = collapsed ? '▸' : '▾';
+    });
+  }
+
+  function renderObjectList() {
+    const listEl = $('objList');
+    const active = {};
+    AUR.canvas.getActiveObjects().forEach(function (o) { active[o.uid] = true; });
+
+    const objs = AUR.canvas.getObjects().filter(function (o) { return !o.isTileLayer; });
+    $('objListCount').textContent = objs.length ? '(' + objs.length + ')' : '';
+    listEl.innerHTML = '';
+
+    if (!objs.length) {
+      const empty = document.createElement('div');
+      empty.className = 'obj-list-empty';
+      empty.textContent = 'Nessun oggetto in scena.';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    // Più in alto nello z-order per primo, come un pannello livelli.
+    // ▲ = porta sopra (verso il primo piano), ▼ = manda sotto.
+    const top = objs.slice().reverse();
+    top.forEach(function (o, i) {
+      const row = document.createElement('div');
+      row.className = 'obj-list-item' + (active[o.uid] ? ' selected' : '');
+      row.innerHTML =
+        '<span class="oli-name"></span>' +
+        '<span class="oli-idx"></span>' +
+        '<span class="oli-z">' +
+          '<button class="oli-up" title="Porta sopra">▲</button>' +
+          '<button class="oli-down" title="Manda sotto">▼</button>' +
+        '</span>';
+      row.querySelector('.oli-name').textContent = niceName(o);
+      row.querySelector('.oli-idx').textContent = String(objs.length - i);
+
+      const up = row.querySelector('.oli-up');
+      const down = row.querySelector('.oli-down');
+      up.disabled = (i === 0);
+      down.disabled = (i === top.length - 1);
+      up.addEventListener('click', function (e) { e.stopPropagation(); moveObjectZ(o, 'up'); });
+      down.addEventListener('click', function (e) { e.stopPropagation(); moveObjectZ(o, 'down'); });
+
+      row.addEventListener('click', function () {
+        AUR.canvas.discardActiveObject();
+        AUR.canvas.setActiveObject(o);
+        AUR.canvas.requestRenderAll();
+        updateInspector();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  // Sposta un oggetto di un livello nello z-order, aggiornando canvas + lista live.
+  function moveObjectZ(o, dir) {
+    AUR.canvas.setActiveObject(o);
+    AUR.zOrder(dir === 'up' ? 'front' : 'back');
+    updateInspector(); // ridisegna la lista con il nuovo ordine e la selezione
   }
 
   function niceName(o) {
@@ -252,8 +398,8 @@ window.AUR = window.AUR || {};
       if (o && o.tileMode) AUR.updateTile(o);
       AUR.emitChange();
     });
-    c.on('object:added', function () { AUR.keepTilesAtBack(); AUR.emitChange(); });
-    c.on('object:removed', function () { AUR.emitChange(); });
+    c.on('object:added', function () { AUR.keepTilesAtBack(); renderObjectList(); AUR.emitChange(); });
+    c.on('object:removed', function () { renderObjectList(); AUR.emitChange(); });
     c.on('mouse:dblclick', function (opt) {
       if (!AUR.state.editMode || AUR.isVertexMode()) return;
       const o = opt.target;
@@ -272,6 +418,12 @@ window.AUR = window.AUR || {};
       const k = e.key;
       if (k === 'e' || k === 'E') { e.preventDefault(); setMode(!AUR.state.editMode); return; }
       if (k === 'f' || k === 'F') { e.preventDefault(); toggleFullscreen(); return; }
+      if (k === 'i' || k === 'I') {
+        e.preventDefault();
+        if (e.shiftKey) setAutoInvert(!AUR.state.autoInvert);
+        else setInvert(!AUR.state.inverted);
+        return;
+      }
       if (k === ' ') { AUR.state.spaceHeld = true; e.preventDefault(); return; }
 
       if (!AUR.state.editMode) return;
@@ -279,8 +431,8 @@ window.AUR = window.AUR || {};
       const o = activeObj();
       if ((k === 'Delete' || k === 'Backspace') && o) { e.preventDefault(); AUR.deleteSelected(); return; }
       if ((e.metaKey || e.ctrlKey) && (k === 'd' || k === 'D')) { e.preventDefault(); AUR.duplicateSelected(); return; }
-      if (k === '[') { e.preventDefault(); AUR.zOrder('back'); return; }
-      if (k === ']') { e.preventDefault(); AUR.zOrder('front'); return; }
+      if (k === '[') { e.preventDefault(); AUR.zOrder(e.shiftKey ? 'toBack' : 'back'); renderObjectList(); return; }
+      if (k === ']') { e.preventDefault(); AUR.zOrder(e.shiftKey ? 'toFront' : 'front'); renderObjectList(); return; }
       if (k === 'Escape') { AUR.canvas.discardActiveObject(); AUR.canvas.requestRenderAll(); updateInspector(); return; }
 
       // Frecce → sposta l'oggetto selezionato.

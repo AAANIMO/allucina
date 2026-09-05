@@ -11,6 +11,7 @@ window.AUR = window.AUR || {};
     return {
       version: 1,
       viewport: AUR.canvas.viewportTransform.slice(),
+      invert: !!(AUR.state && AUR.state.inverted),
       canvas: AUR.canvas.toJSON(AUR.CUSTOM_PROPS)
     };
   };
@@ -30,6 +31,7 @@ window.AUR = window.AUR || {};
       if (data.viewport && data.viewport.length === 6) {
         AUR.canvas.setViewportTransform(data.viewport);
       }
+      if (AUR.setInvert) AUR.setInvert(!!data.invert);
       // Riapplica i filtri delle immagini e ricostruisci le piastrelle.
       AUR.canvas.getObjects().forEach(function (o) {
         if (o.type === 'image' && o.filters && o.filters.length) o.applyFilters();
