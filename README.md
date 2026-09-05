@@ -20,8 +20,10 @@ your subject.
 
 **macOS**
 
-- 🍎 [**Apple Silicon (M1–M4)**](https://github.com/AAANIMO/allucina/releases/download/untagged-40117643209fef17107a/Allucina-1.0.1-arm64.dmg) — `Allucina-1.0.1-arm64.dmg`
-- 💻 [**Intel**](https://github.com/AAANIMO/allucina/releases/download/untagged-40117643209fef17107a/Allucina-1.0.1.dmg) — `Allucina-1.0.1.dmg`
+- 🍎 [**Apple Silicon (M1–M4)**](https://github.com/AAANIMO/allucina/releases/latest/download/Allucina-arm64.dmg)
+- 💻 [**Intel**](https://github.com/AAANIMO/allucina/releases/latest/download/Allucina-x64.dmg)
+
+*Always points to the newest release.*
 
 Open the `.dmg` and drag **Allucina** into Applications. It's unsigned — on first
 launch **right-click → Open**.

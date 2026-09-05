@@ -41,12 +41,14 @@
     "mac": {
       "icon": "build/icon.icns",
       "category": "public.app-category.graphics-design",
+      "artifactName": "${productName}-${arch}.${ext}",
       "target": [
         { "target": "dmg", "arch": ["arm64", "x64"] }
       ]
     },
     "win": {
       "icon": "assets/icon-512.png",
+      "artifactName": "${productName}-${arch}.${ext}",
       "target": ["nsis"]
     }
   }
