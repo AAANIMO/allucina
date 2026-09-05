@@ -1,5 +1,5 @@
-/* Service worker Aureola — cache dell'app shell per uso offline */
-const CACHE = 'aureola-v1';
+/* Service worker Allucina — cache dell'app shell per uso offline */
+const CACHE = 'allucina-v1';
 const ASSETS = [
   './',
   './index.html',

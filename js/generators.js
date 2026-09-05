@@ -1,11 +1,11 @@
-/* ===== Aureola — generatori di pattern parametrici =====
+/* ===== Allucina — generatori di pattern parametrici =====
  * Ogni generatore è: { label, params:[...], build(params, S) -> {d, stroke, fill, strokeWidth} }
  * `S` è la dimensione target in unità scena (≈ riempie lo schermo corrente).
- * Aggiungerne di nuovi = aggiungere una voce a AUR.Generators.
+ * Aggiungerne di nuovi = aggiungere una voce a ALL.Generators.
  */
-window.AUR = window.AUR || {};
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   function ptsToPath(pts) {
@@ -26,7 +26,7 @@ window.AUR = window.AUR || {};
       .concat(jagged(mx, my, x2, y2, disp / 1.9, detail - 1));
   }
 
-  AUR.Generators = {
+  ALL.Generators = {
 
     spiral: {
       label: 'Spirale',
@@ -202,16 +202,16 @@ window.AUR = window.AUR || {};
     }
   };
 
-  AUR.genDefaults = function (type) {
-    const g = AUR.Generators[type];
+  ALL.genDefaults = function (type) {
+    const g = ALL.Generators[type];
     const o = {};
     if (g) g.params.forEach(function (pr) { o[pr.key] = pr.default; });
     return o;
   };
 
   function buildPath(type, params, keep) {
-    const gen = AUR.Generators[type];
-    const vis = AUR.getVisibleSceneRect();
+    const gen = ALL.Generators[type];
+    const vis = ALL.getVisibleSceneRect();
     const S = Math.min(vis.width, vis.height) * 0.9;
     const res = gen.build(params, S);
     const path = new fabric.Path(res.d, Object.assign({
@@ -224,29 +224,29 @@ window.AUR = window.AUR || {};
       // niente cache bitmap: il path resta vettoriale e nitido a qualsiasi zoom
       objectCaching: false
     }, keep || {}));
-    path.aureolaType = 'generated';
+    path.allucinaType = 'generated';
     path.genType = type;
     path.genParams = params;
     return path;
   }
 
-  AUR.addGenerated = function (type, params) {
-    if (!AUR.Generators[type]) return;
-    params = params || AUR.genDefaults(type);
+  ALL.addGenerated = function (type, params) {
+    if (!ALL.Generators[type]) return;
+    params = params || ALL.genDefaults(type);
     const path = buildPath(type, params);
-    path.uid = AUR.nextUid();
+    path.uid = ALL.nextUid();
     path.lum = 1; path.blurAmt = 0;
-    const ctr = AUR.sceneCenter();
+    const ctr = ALL.sceneCenter();
     path.set({ left: ctr.x, top: ctr.y });
-    AUR.canvas.add(path);
-    AUR.canvas.setActiveObject(path);
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    ALL.canvas.add(path);
+    ALL.canvas.setActiveObject(path);
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
     return path;
   };
 
   // Rigenera l'oggetto selezionato mantenendo posizione/scala/rotazione.
-  AUR.regenerate = function (obj, params) {
+  ALL.regenerate = function (obj, params) {
     if (!obj || !obj.genType) return;
     const keep = {
       left: obj.left, top: obj.top, scaleX: obj.scaleX, scaleY: obj.scaleY,
@@ -254,15 +254,15 @@ window.AUR = window.AUR || {};
     };
     const np = buildPath(obj.genType, params, keep);
     np.uid = obj.uid; np.lum = obj.lum; np.blurAmt = obj.blurAmt;
-    const wasActive = AUR.canvas.getActiveObject() === obj;
-    if (obj.tileMode) { np.tileMode = true; np.tileGap = obj.tileGap; AUR.removeTile(obj); }
-    AUR.canvas.remove(obj);
-    AUR.canvas.add(np);
-    if (wasActive) AUR.canvas.setActiveObject(np);
-    if (np.tileMode) AUR.updateTile(np);
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    const wasActive = ALL.canvas.getActiveObject() === obj;
+    if (obj.tileMode) { np.tileMode = true; np.tileGap = obj.tileGap; ALL.removeTile(obj); }
+    ALL.canvas.remove(obj);
+    ALL.canvas.add(np);
+    if (wasActive) ALL.canvas.setActiveObject(np);
+    if (np.tileMode) ALL.updateTile(np);
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
     return np;
   };
 
-})(window.AUR);
+})(window.ALL);

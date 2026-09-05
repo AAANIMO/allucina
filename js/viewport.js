@@ -1,15 +1,15 @@
-/* ===== Aureola — viewport: pan/zoom infinito + gesture trackpad Apple ===== */
-window.AUR = window.AUR || {};
+/* ===== Allucina — viewport: pan/zoom infinito + gesture trackpad Apple ===== */
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   const MIN_ZOOM = 0.02;
   const MAX_ZOOM = 40;
 
   // Coordinate scena del centro del viewport corrente.
-  AUR.sceneCenter = function () {
-    const c = AUR.canvas;
+  ALL.sceneCenter = function () {
+    const c = ALL.canvas;
     const zoom = c.getZoom();
     const vpt = c.viewportTransform;
     return {
@@ -19,8 +19,8 @@ window.AUR = window.AUR || {};
   };
 
   // Rettangolo (in coordinate scena) attualmente visibile sullo schermo.
-  AUR.getVisibleSceneRect = function () {
-    const c = AUR.canvas;
+  ALL.getVisibleSceneRect = function () {
+    const c = ALL.canvas;
     const zoom = c.getZoom();
     const vpt = c.viewportTransform;
     return {
@@ -31,15 +31,15 @@ window.AUR = window.AUR || {};
     };
   };
 
-  AUR.zoomAt = function (px, py, newZoom) {
-    const c = AUR.canvas;
+  ALL.zoomAt = function (px, py, newZoom) {
+    const c = ALL.canvas;
     newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newZoom));
     c.zoomToPoint(new fabric.Point(px, py), newZoom);
   };
 
   // Collega le gesture del trackpad al canvas.
-  AUR.initViewport = function () {
-    const c = AUR.canvas;
+  ALL.initViewport = function () {
+    const c = ALL.canvas;
 
     c.on('mouse:wheel', function (opt) {
       const e = opt.e;
@@ -53,7 +53,7 @@ window.AUR = window.AUR || {};
         const d = Math.max(-40, Math.min(40, e.deltaY));
         let zoom = c.getZoom();
         zoom *= Math.pow(0.99, d);
-        AUR.zoomAt(e.offsetX, e.offsetY, zoom);
+        ALL.zoomAt(e.offsetX, e.offsetY, zoom);
       } else {
         // ---- SCROLL a due dita → pan orizzontale + verticale ----
         const vpt = c.viewportTransform;
@@ -62,7 +62,7 @@ window.AUR = window.AUR || {};
         c.setViewportTransform(vpt);
         c.requestRenderAll();
       }
-      AUR.onViewportChanged && AUR.onViewportChanged();
+      ALL.onViewportChanged && ALL.onViewportChanged();
     });
 
     // Pan alternativo: spazio + trascina, oppure trascino su area vuota col
@@ -72,7 +72,7 @@ window.AUR = window.AUR || {};
 
     c.on('mouse:down', function (opt) {
       const e = opt.e;
-      const spaceHeld = AUR.state && AUR.state.spaceHeld;
+      const spaceHeld = ALL.state && ALL.state.spaceHeld;
       if (e.button === 1 || spaceHeld) {
         panning = true;
         last = { x: e.clientX, y: e.clientY };
@@ -90,31 +90,31 @@ window.AUR = window.AUR || {};
       last = { x: e.clientX, y: e.clientY };
       c.setViewportTransform(vpt);
       c.requestRenderAll();
-      AUR.onViewportChanged && AUR.onViewportChanged();
+      ALL.onViewportChanged && ALL.onViewportChanged();
     });
 
     c.on('mouse:up', function () {
       if (!panning) return;
       panning = false;
-      c.selection = AUR.state ? AUR.state.editMode : true;
+      c.selection = ALL.state ? ALL.state.editMode : true;
     });
 
     // Ridimensionamento finestra → canvas a tutto schermo.
     function fit() {
       c.setDimensions({ width: window.innerWidth, height: window.innerHeight });
       c.requestRenderAll();
-      AUR.onViewportChanged && AUR.onViewportChanged();
+      ALL.onViewportChanged && ALL.onViewportChanged();
     }
     window.addEventListener('resize', fit);
     fit();
   };
 
   // Reset vista (zoom 100%, origine al centro schermo).
-  AUR.resetView = function () {
-    const c = AUR.canvas;
+  ALL.resetView = function () {
+    const c = ALL.canvas;
     c.setViewportTransform([1, 0, 0, 1, c.getWidth() / 2, c.getHeight() / 2]);
     c.requestRenderAll();
-    AUR.onViewportChanged && AUR.onViewportChanged();
+    ALL.onViewportChanged && ALL.onViewportChanged();
   };
 
-})(window.AUR);
+})(window.ALL);

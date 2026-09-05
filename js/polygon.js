@@ -1,7 +1,7 @@
-/* ===== Aureola — forma dai vertici + editing dei punti ===== */
-window.AUR = window.AUR || {};
+/* ===== Allucina — forma dai vertici + editing dei punti ===== */
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   const WHITE = '#ffffff';
@@ -11,13 +11,13 @@ window.AUR = window.AUR || {};
   let preview = null;    // polyline di anteprima
   let handlers = null;
 
-  AUR.isVertexMode = function () { return active; };
+  ALL.isVertexMode = function () { return active; };
 
-  AUR.startVertexTool = function () {
+  ALL.startVertexTool = function () {
     if (active) return;
     active = true;
     points = []; markers = [];
-    const c = AUR.canvas;
+    const c = ALL.canvas;
     c.discardActiveObject();
     c.selection = false;
     c.skipTargetFind = true;
@@ -52,7 +52,7 @@ window.AUR = window.AUR || {};
   };
 
   function redraw(cursor) {
-    const c = AUR.canvas;
+    const c = ALL.canvas;
     if (preview) c.remove(preview);
     const pts = points.slice();
     if (cursor) pts.push(cursor);
@@ -63,7 +63,7 @@ window.AUR = window.AUR || {};
     });
     c.add(preview);
     preview.sendToBack();
-    AUR.keepTilesAtBack && AUR.keepTilesAtBack();
+    ALL.keepTilesAtBack && ALL.keepTilesAtBack();
     c.requestRenderAll();
   }
 
@@ -74,11 +74,11 @@ window.AUR = window.AUR || {};
   }
 
   function cleanup() {
-    const c = AUR.canvas;
+    const c = ALL.canvas;
     markers.forEach(function (m) { c.remove(m); });
     if (preview) c.remove(preview);
     markers = []; preview = null;
-    c.selection = AUR.state ? AUR.state.editMode : true;
+    c.selection = ALL.state ? ALL.state.editMode : true;
     c.skipTargetFind = false;
     c.defaultCursor = 'default';
     document.getElementById('vertexHint').hidden = true;
@@ -92,29 +92,29 @@ window.AUR = window.AUR || {};
     active = false;
   }
 
-  function cancel() { cleanup(); AUR.canvas.requestRenderAll(); }
+  function cancel() { cleanup(); ALL.canvas.requestRenderAll(); }
 
   function finalize() {
     const pts = points.slice();
     cleanup();
-    if (pts.length < 3) { AUR.canvas.requestRenderAll(); return; }
+    if (pts.length < 3) { ALL.canvas.requestRenderAll(); return; }
     const poly = new fabric.Polygon(pts, { fill: WHITE });
-    poly.aureolaType = 'polygon';
-    poly.uid = AUR.nextUid();
+    poly.allucinaType = 'polygon';
+    poly.uid = ALL.nextUid();
     poly.lum = 1; poly.blurAmt = 0;
-    AUR.canvas.add(poly);
-    AUR.canvas.setActiveObject(poly);
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    ALL.canvas.add(poly);
+    ALL.canvas.setActiveObject(poly);
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
   }
 
   // ---- Editing dei vertici (doppio click su un poligono) ----
-  AUR.togglePointEditing = function (poly) {
+  ALL.togglePointEditing = function (poly) {
     if (!poly || (poly.type !== 'polygon' && poly.type !== 'polyline')) return;
     try {
       if (poly._editingPoints) { exitPointEditing(poly); }
       else { enterPointEditing(poly); }
-      AUR.canvas.requestRenderAll();
+      ALL.canvas.requestRenderAll();
     } catch (e) { /* editing punti non disponibile: ignora */ }
   };
 
@@ -142,7 +142,7 @@ window.AUR = window.AUR || {};
     poly.hasBorders = true;
     poly.controls = fabric.Object.prototype.controls;
     poly.objectCaching = true;
-    AUR.emitChange();
+    ALL.emitChange();
   }
 
   function polygonPositionHandler(dim, finalMatrix, fabricObject) {
@@ -187,4 +187,4 @@ window.AUR = window.AUR || {};
     };
   }
 
-})(window.AUR);
+})(window.ALL);

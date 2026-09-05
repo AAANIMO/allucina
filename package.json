@@ -1,7 +1,7 @@
 {
-  "name": "aureola",
+  "name": "allucina",
   "version": "1.0.0",
-  "description": "Aureola — luce da studio e proiezione per animosity.",
+  "description": "Allucina — luce da studio e proiezione per animosity.",
   "author": "Tommaso Ascari",
   "license": "MIT",
   "main": "main.js",
@@ -16,8 +16,8 @@
     "electron-builder": "^25.1.8"
   },
   "build": {
-    "appId": "com.animosity.aureola",
-    "productName": "Aureola",
+    "appId": "com.animosity.allucina",
+    "productName": "Allucina",
     "files": [
       "index.html",
       "main.js",

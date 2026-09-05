@@ -1,7 +1,7 @@
 {
-  "name": "Aureola",
-  "short_name": "Aureola",
-  "description": "Aureola — luce da studio e proiezione per animosity.",
+  "name": "Allucina",
+  "short_name": "Allucina",
+  "description": "Allucina — luce da studio e proiezione per animosity.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -1,13 +1,13 @@
-/* ===== Aureola — oggetti: aggiunta, trasformazione, flip, luminosità, blur ===== */
-window.AUR = window.AUR || {};
+/* ===== Allucina — oggetti: aggiunta, trasformazione, flip, luminosità, blur ===== */
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   const WHITE = '#ffffff';
 
   // Proprietà custom da serializzare col progetto.
-  AUR.CUSTOM_PROPS = ['aureolaType', 'lum', 'blurAmt', 'objInvert', 'objBW', 'color',
+  ALL.CUSTOM_PROPS = ['allucinaType', 'lum', 'blurAmt', 'objInvert', 'objBW', 'color',
     'tileMode', 'tileGap', 'tileOffX', 'tileOffY', 'tileFlipAltH', 'tileFlipAltV',
     'genType', 'genParams', 'isTileLayer', 'tileSourceId', 'uid'];
 
@@ -19,10 +19,10 @@ window.AUR = window.AUR || {};
   }
 
   let _uid = 1;
-  AUR.nextUid = function () { return 'o' + (_uid++) + '_' + Date.now().toString(36); };
+  ALL.nextUid = function () { return 'o' + (_uid++) + '_' + Date.now().toString(36); };
 
   // Stile dei controlli di trasformazione (maniglie) su tema scuro.
-  AUR.applyControlTheme = function () {
+  ALL.applyControlTheme = function () {
     const p = fabric.Object.prototype;
     p.transparentCorners = false;
     p.cornerColor = '#6ea8ff';
@@ -37,19 +37,19 @@ window.AUR = window.AUR || {};
   };
 
   function place(obj) {
-    const ctr = AUR.sceneCenter();
+    const ctr = ALL.sceneCenter();
     obj.set({ left: ctr.x, top: ctr.y, originX: 'center', originY: 'center' });
-    obj.uid = AUR.nextUid();
+    obj.uid = ALL.nextUid();
     obj.lum = obj.lum != null ? obj.lum : 1;
     obj.blurAmt = obj.blurAmt || 0;
-    AUR.canvas.add(obj);
-    AUR.canvas.setActiveObject(obj);
-    AUR.canvas.requestRenderAll();
+    ALL.canvas.add(obj);
+    ALL.canvas.setActiveObject(obj);
+    ALL.canvas.requestRenderAll();
     return obj;
   }
 
   // ---- Forme predefinite ----
-  AUR.addShape = function (kind) {
+  ALL.addShape = function (kind) {
     let obj;
     switch (kind) {
       case 'rect':
@@ -67,7 +67,7 @@ window.AUR = window.AUR || {};
       default:
         obj = new fabric.Rect({ width: 160, height: 160, fill: WHITE });
     }
-    obj.aureolaType = kind;
+    obj.allucinaType = kind;
     return place(obj);
   };
 
@@ -81,25 +81,25 @@ window.AUR = window.AUR || {};
   }
 
   // ---- Import immagine ----
-  AUR.addImageFromDataURL = function (dataURL) {
+  ALL.addImageFromDataURL = function (dataURL) {
     fabric.Image.fromURL(dataURL, function (img) {
       // Scala per stare comodamente nel viewport corrente.
-      const vis = AUR.getVisibleSceneRect();
+      const vis = ALL.getVisibleSceneRect();
       const maxW = vis.width * 0.6, maxH = vis.height * 0.6;
       const s = Math.min(1, maxW / img.width, maxH / img.height);
       img.scale(s);
-      img.aureolaType = 'image';
+      img.allucinaType = 'image';
       place(img);
     }, { crossOrigin: 'anonymous' });
   };
 
   // ---- Import SVG (forzato bianco di default per proiezione) ----
-  AUR.addSVGFromString = function (svgText) {
+  ALL.addSVGFromString = function (svgText) {
     fabric.loadSVGFromString(svgText, function (objects, options) {
       const obj = fabric.util.groupSVGElements(objects, options);
-      AUR.makeWhite(obj);
-      obj.aureolaType = 'svg';
-      const vis = AUR.getVisibleSceneRect();
+      ALL.makeWhite(obj);
+      obj.allucinaType = 'svg';
+      const vis = ALL.getVisibleSceneRect();
       const w = obj.width || 100, hh = obj.height || 100;
       const s = Math.min(1, (vis.width * 0.6) / w, (vis.height * 0.6) / hh);
       obj.scale(s);
@@ -108,14 +108,14 @@ window.AUR = window.AUR || {};
   };
 
   // ---- Testo con font gotici (blackletter) ----
-  AUR.GOTHIC_FONTS = [
+  ALL.GOTHIC_FONTS = [
     { css: 'UnifrakturMaguntia', label: 'Unifraktur Maguntia' },
     { css: 'UnifrakturCook', label: 'Unifraktur Cook' },
     { css: 'Pirata One', label: 'Pirata One' },
     { css: 'Grenze Gotisch', label: 'Grenze Gotisch' }
   ];
 
-  AUR.ensureFont = function (font, cb) {
+  ALL.ensureFont = function (font, cb) {
     try {
       if (document.fonts && document.fonts.load) {
         Promise.all([
@@ -126,65 +126,65 @@ window.AUR = window.AUR || {};
     } catch (e) { cb && cb(); }
   };
 
-  AUR.preloadFonts = function () {
-    AUR.GOTHIC_FONTS.forEach(function (f) { AUR.ensureFont(f.css); });
+  ALL.preloadFonts = function () {
+    ALL.GOTHIC_FONTS.forEach(function (f) { ALL.ensureFont(f.css); });
   };
 
-  AUR.addText = function (str, font) {
-    font = font || AUR.GOTHIC_FONTS[0].css;
-    const t = new fabric.Textbox(str || 'Aureola', {
+  ALL.addText = function (str, font) {
+    font = font || ALL.GOTHIC_FONTS[0].css;
+    const t = new fabric.Textbox(str || 'Allucina', {
       fontFamily: font, fill: WHITE, fontSize: 130,
       textAlign: 'center', width: 640, lineHeight: 1.05,
       originX: 'center', originY: 'center', editable: true
     });
-    t.aureolaType = 'text';
-    t.uid = AUR.nextUid();
+    t.allucinaType = 'text';
+    t.uid = ALL.nextUid();
     t.lum = 1; t.blurAmt = 0;
-    const ctr = AUR.sceneCenter();
+    const ctr = ALL.sceneCenter();
     t.set({ left: ctr.x, top: ctr.y });
-    AUR.canvas.add(t);
-    AUR.canvas.setActiveObject(t);
-    AUR.ensureFont(font, function () {
+    ALL.canvas.add(t);
+    ALL.canvas.setActiveObject(t);
+    ALL.ensureFont(font, function () {
       if (t.initDimensions) t.initDimensions();
       t.setCoords();
-      AUR.canvas.requestRenderAll();
-      if (t.tileMode) AUR.updateTile(t);
+      ALL.canvas.requestRenderAll();
+      if (t.tileMode) ALL.updateTile(t);
     });
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
     return t;
   };
 
-  AUR.setText = function (o, str) {
+  ALL.setText = function (o, str) {
     if (!o) return;
     o.set('text', str);
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
   };
 
-  AUR.setFont = function (o, font) {
+  ALL.setFont = function (o, font) {
     if (!o) return;
-    AUR.ensureFont(font, function () {
+    ALL.ensureFont(font, function () {
       o.set('fontFamily', font);
       if (o.initDimensions) o.initDimensions();
       o.setCoords();
-      AUR.canvas.requestRenderAll();
-      if (o.tileMode) AUR.updateTile(o);
+      ALL.canvas.requestRenderAll();
+      if (o.tileMode) ALL.updateTile(o);
     });
   };
 
-  AUR.makeWhite = function (obj) {
+  ALL.makeWhite = function (obj) {
     const paint = function (o) {
       if (o.fill && o.fill !== 'transparent') o.set('fill', WHITE);
       if (o.stroke) o.set('stroke', WHITE);
     };
     if (obj._objects && obj._objects.length) obj._objects.forEach(paint);
     else paint(obj);
-    AUR.canvas.requestRenderAll();
+    ALL.canvas.requestRenderAll();
   };
 
   // ---- Inversione colori del singolo oggetto (es. cerchio nero su bianco) ----
-  AUR.setObjectInvert = function (o, on) {
+  ALL.setObjectInvert = function (o, on) {
     if (!o) return;
     o.objInvert = !!on;
     if (o.type === 'image') {
@@ -194,18 +194,18 @@ window.AUR = window.AUR || {};
       if (on) filters.push(new fabric.Image.filters.Invert());
       o.filters = filters;
       o.applyFilters();
-      AUR.canvas.requestRenderAll();
-      if (o.tileMode) AUR.updateTile(o);
+      ALL.canvas.requestRenderAll();
+      if (o.tileMode) ALL.updateTile(o);
     } else {
       // Ri-applica il livello di grigio tenendo conto dell'inversione.
-      AUR.setLuminosity(o, o.lum != null ? o.lum : 1);
+      ALL.setLuminosity(o, o.lum != null ? o.lum : 1);
     }
   };
 
   // ---- Colore dell'oggetto ----
   // Vettori: colore di riempimento/tratto (scurito dalla luminosità).
   // Immagini: tinta via filtro BlendColor (multiply); bianco = nessuna tinta.
-  AUR.setColor = function (o, hex) {
+  ALL.setColor = function (o, hex) {
     if (!o) return;
     o.color = hex || '#ffffff';
     if (o.type === 'image') {
@@ -217,15 +217,15 @@ window.AUR = window.AUR || {};
       }
       o.filters = filters;
       o.applyFilters();
-      AUR.canvas.requestRenderAll();
-      if (o.tileMode) AUR.updateTile(o);
+      ALL.canvas.requestRenderAll();
+      if (o.tileMode) ALL.updateTile(o);
     } else {
-      AUR.setLuminosity(o, o.lum != null ? o.lum : 1);
+      ALL.setLuminosity(o, o.lum != null ? o.lum : 1);
     }
   };
 
   // ---- Bianco e nero (immagini): filtro Grayscale ----
-  AUR.setObjectBW = function (o, on) {
+  ALL.setObjectBW = function (o, on) {
     if (!o || o.type !== 'image') return;
     o.objBW = !!on;
     const filters = (o.filters || []).filter(function (f) {
@@ -234,32 +234,32 @@ window.AUR = window.AUR || {};
     if (on) filters.push(new fabric.Image.filters.Grayscale());
     o.filters = filters;
     o.applyFilters();
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
   };
 
   // ---- Flip / specchia ----
-  AUR.flip = function (axis) {
-    const o = AUR.canvas.getActiveObject();
+  ALL.flip = function (axis) {
+    const o = ALL.canvas.getActiveObject();
     if (!o) return;
     if (axis === 'x') o.set('flipX', !o.flipX);
     else o.set('flipY', !o.flipY);
     o.setCoords();
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
-    AUR.emitChange();
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
+    ALL.emitChange();
   };
 
   // ---- Opacità ----
-  AUR.setOpacity = function (o, v) {
+  ALL.setOpacity = function (o, v) {
     if (!o) return;
     o.set('opacity', v);
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
   };
 
   // ---- Luminosità (immagini: filtro Brightness; vettori: livello di grigio) ----
-  AUR.setLuminosity = function (o, v) {
+  ALL.setLuminosity = function (o, v) {
     if (!o) return;
     o.lum = v;
     if (o.type === 'image') {
@@ -278,12 +278,12 @@ window.AUR = window.AUR || {};
       if (o._objects && o._objects.length) o._objects.forEach(function (s) { if (s.fill && s.fill !== 'transparent') s.set('fill', col); if (s.stroke) s.set('stroke', col); });
       else { if (o.fill) o.set('fill', col); if (o.stroke) o.set('stroke', col); }
     }
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
   };
 
   // ---- Sfocatura bordi (immagini: filtro Blur; vettori: glow morbido) ----
-  AUR.setBlur = function (o, v) {
+  ALL.setBlur = function (o, v) {
     if (!o) return;
     o.blurAmt = v;
     if (o.type === 'image') {
@@ -300,45 +300,45 @@ window.AUR = window.AUR || {};
         o.set('shadow', null);
       }
     }
-    AUR.canvas.requestRenderAll();
-    if (o.tileMode) AUR.updateTile(o);
+    ALL.canvas.requestRenderAll();
+    if (o.tileMode) ALL.updateTile(o);
   };
 
   // ---- Duplica / elimina / z-order ----
-  AUR.duplicateSelected = function () {
-    const o = AUR.canvas.getActiveObject();
+  ALL.duplicateSelected = function () {
+    const o = ALL.canvas.getActiveObject();
     if (!o) return;
     o.clone(function (clone) {
       clone.set({ left: o.left + 30, top: o.top + 30 });
-      clone.uid = AUR.nextUid();
+      clone.uid = ALL.nextUid();
       clone.tileMode = false; // il clone parte senza piastrella
       clone.isTileLayer = false;
-      AUR.canvas.add(clone);
-      AUR.canvas.setActiveObject(clone);
-      AUR.canvas.requestRenderAll();
-      AUR.emitChange();
-    }, AUR.CUSTOM_PROPS);
+      ALL.canvas.add(clone);
+      ALL.canvas.setActiveObject(clone);
+      ALL.canvas.requestRenderAll();
+      ALL.emitChange();
+    }, ALL.CUSTOM_PROPS);
   };
 
-  AUR.deleteSelected = function () {
-    const objs = AUR.canvas.getActiveObjects();
+  ALL.deleteSelected = function () {
+    const objs = ALL.canvas.getActiveObjects();
     objs.forEach(function (o) {
-      if (o.tileMode) AUR.removeTile(o);
-      AUR.canvas.remove(o);
+      if (o.tileMode) ALL.removeTile(o);
+      ALL.canvas.remove(o);
     });
-    AUR.canvas.discardActiveObject();
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    ALL.canvas.discardActiveObject();
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
   };
 
   // dir: 'toFront' | 'toBack' (in cima/fondo a tutti) — 'front' | 'back' (un livello).
   // Lavora sulla lista degli oggetti REALI (piastrelle escluse) e poi ricostruisce
   // lo stack con restack: così lo z-order funziona anche per gli oggetti
   // piastrellati (il layer di copie segue il master).
-  AUR.zOrder = function (dir) {
-    const o = AUR.canvas.getActiveObject();
+  ALL.zOrder = function (dir) {
+    const o = ALL.canvas.getActiveObject();
     if (!o || o.isTileLayer) return;
-    const reals = AUR.canvas.getObjects().filter(function (x) { return !x.isTileLayer; });
+    const reals = ALL.canvas.getObjects().filter(function (x) { return !x.isTileLayer; });
     const i = reals.indexOf(o);
     if (i < 0) return;
     let j;
@@ -349,9 +349,9 @@ window.AUR = window.AUR || {};
     if (j === i) return;
     reals.splice(i, 1);
     reals.splice(j, 0, o);
-    AUR.restack(reals);
-    AUR.canvas.requestRenderAll();
-    AUR.emitChange();
+    ALL.restack(reals);
+    ALL.canvas.requestRenderAll();
+    ALL.emitChange();
   };
 
-})(window.AUR);
+})(window.ALL);

@@ -1,4 +1,4 @@
-/* ===== Aureola — piastrella per-oggetto =====
+/* ===== Allucina — piastrella per-oggetto =====
  * Ogni oggetto "master" con tileMode=true genera un rettangolo enorme in
  * coordinate SCENA riempito con un fabric.Pattern ricavato dal master.
  * Essendo un oggetto della scena, pan e zoom lo trasformano automaticamente,
@@ -7,9 +7,9 @@
  * Il layer di piastrella vive SUBITO SOTTO il suo master nello stack: così lo
  * z-order del master (frecce nell'elenco oggetti) sposta anche le sue copie.
  */
-window.AUR = window.AUR || {};
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   const HUGE = 60000;        // semi-estensione della piastrella in unità scena
@@ -17,23 +17,23 @@ window.AUR = window.AUR || {};
   const MAX_AREA = 4096 * 4096; // area massima (~16.7M px): sicura anche su Safari
 
   function findTileLayer(master) {
-    return AUR.canvas.getObjects().find(function (o) {
+    return ALL.canvas.getObjects().find(function (o) {
       return o.isTileLayer && o.tileSourceId === master.uid;
     });
   }
 
-  AUR.enableTile = function (master, gap) {
+  ALL.enableTile = function (master, gap) {
     if (!master || master.isTileLayer) return;
     master.tileMode = true;
     if (gap != null) master.tileGap = gap;
-    AUR.updateTile(master);
+    ALL.updateTile(master);
   };
 
-  AUR.removeTile = function (master) {
+  ALL.removeTile = function (master) {
     const layer = findTileLayer(master);
-    if (layer) AUR.canvas.remove(layer);
+    if (layer) ALL.canvas.remove(layer);
     master.tileMode = false;
-    AUR.canvas.requestRenderAll();
+    ALL.canvas.requestRenderAll();
   };
 
   // Fattore di riduzione perché la cella sorgente resti entro i limiti del
@@ -98,7 +98,7 @@ window.AUR = window.AUR || {};
 
   // Sposta il layer di piastrella subito sotto il suo master nello stack.
   function placeLayerBelowMaster(master, layer) {
-    const c = AUR.canvas;
+    const c = ALL.canvas;
     const mi = c.getObjects().indexOf(master);
     const li = c.getObjects().indexOf(layer);
     if (mi < 0 || li < 0) return;
@@ -107,7 +107,7 @@ window.AUR = window.AUR || {};
   }
 
   // Costruisce/aggiorna la piastrella per un master.
-  AUR.updateTile = function (master) {
+  ALL.updateTile = function (master) {
     if (!master || master.isTileLayer || !master.tileMode) return;
 
     const gap = Math.max(0, master.tileGap || 0);
@@ -162,16 +162,16 @@ window.AUR = window.AUR || {};
     // Costruisci-poi-rimuovi: solo ora che la nuova piastrella è pronta
     // togliamo la vecchia, così un rebuild fallito non fa sparire le copie.
     const old = findTileLayer(master);
-    if (old) AUR.canvas.remove(old);
-    AUR.canvas.add(layer);
+    if (old) ALL.canvas.remove(old);
+    ALL.canvas.add(layer);
     placeLayerBelowMaster(master, layer);
-    AUR.canvas.requestRenderAll();
+    ALL.canvas.requestRenderAll();
   };
 
   // Rimette ogni layer di piastrella subito sotto il proprio master, e rimuove
   // i layer orfani. (Nome storico mantenuto: chiamato da object:added ecc.)
-  AUR.syncTileLayers = function () {
-    const c = AUR.canvas;
+  ALL.syncTileLayers = function () {
+    const c = ALL.canvas;
     c.getObjects().filter(function (o) { return o.isTileLayer; }).forEach(function (layer) {
       const master = c.getObjects().find(function (o) {
         return !o.isTileLayer && o.uid === layer.tileSourceId;
@@ -180,12 +180,12 @@ window.AUR = window.AUR || {};
       placeLayerBelowMaster(master, layer);
     });
   };
-  AUR.keepTilesAtBack = AUR.syncTileLayers;
+  ALL.keepTilesAtBack = ALL.syncTileLayers;
 
   // Riordina l'intero stack da una lista di oggetti reali (dal basso in alto),
   // tenendo ogni layer di piastrella incollato sotto il proprio master.
-  AUR.restack = function (realBottomToTop) {
-    const c = AUR.canvas;
+  ALL.restack = function (realBottomToTop) {
+    const c = ALL.canvas;
     // Rimuovi layer orfani.
     c.getObjects().filter(function (o) {
       return o.isTileLayer && !realBottomToTop.some(function (m) { return m.uid === o.tileSourceId; });
@@ -202,15 +202,15 @@ window.AUR = window.AUR || {};
   };
 
   // Ricostruisce tutte le piastrelle (usato dopo il caricamento del progetto).
-  AUR.rebuildAllTiles = function () {
-    AUR.canvas.getObjects().slice().forEach(function (o) {
-      if (o.isTileLayer) AUR.canvas.remove(o); // pulizia difensiva
+  ALL.rebuildAllTiles = function () {
+    ALL.canvas.getObjects().slice().forEach(function (o) {
+      if (o.isTileLayer) ALL.canvas.remove(o); // pulizia difensiva
     });
-    AUR.canvas.getObjects().forEach(function (o) {
-      if (o.tileMode && !o.isTileLayer) AUR.updateTile(o);
+    ALL.canvas.getObjects().forEach(function (o) {
+      if (o.tileMode && !o.isTileLayer) ALL.updateTile(o);
     });
-    AUR.syncTileLayers();
-    AUR.canvas.requestRenderAll();
+    ALL.syncTileLayers();
+    ALL.canvas.requestRenderAll();
   };
 
-})(window.AUR);
+})(window.ALL);

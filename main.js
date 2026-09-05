@@ -1,4 +1,4 @@
-/* Aureola — processo principale Electron.
+/* Allucina — processo principale Electron.
    Carica l'app statica (index.html) in una finestra nativa. */
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
@@ -12,7 +12,7 @@ function createWindow() {
     minWidth: 800,
     minHeight: 500,
     backgroundColor: '#000000',
-    title: 'Aureola',
+    title: 'Allucina',
     icon: path.join(__dirname, 'build', 'icon.icns'),
     webPreferences: {
       contextIsolation: true,

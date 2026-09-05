@@ -1,4 +1,4 @@
-# Aureola
+# Allucina
 
 Canvas nero a tutto schermo per usare un **proiettore come luce da studio**.
 Aggiungi forme, SVG e immagini, le manipoli in tempo reale e — uscendo dalla
@@ -18,7 +18,7 @@ App nativa con finestra propria, icona nel dock e controllo fullscreen/kiosk.
 
 ```bash
 npm install        # installa Electron (una volta)
-npm start          # avvia Aureola in una finestra nativa
+npm start          # avvia Allucina in una finestra nativa
 ```
 
 Per creare l'eseguibile distribuibile:
@@ -28,7 +28,7 @@ npm run dist:mac   # genera un .dmg in release/  (Apple Silicon + Intel)
 npm run dist:win   # genera un installer .exe in release/ (da Windows)
 ```
 
-Il `.dmg` prodotto in `release/` si installa trascinando **Aureola** nella
+Il `.dmg` prodotto in `release/` si installa trascinando **Allucina** nella
 cartella Applicazioni. È **unsigned** (nessun certificato Apple): al primo
 avvio fai **click destro → Apri** per bypassare Gatekeeper.
 
@@ -40,13 +40,13 @@ In alternativa, servendo la cartella via http la si può installare come PWA:
 python3 -m http.server 8000
 ```
 
-Apri `http://localhost:8000` in Chrome/Edge → menu → **Installa Aureola**.
+Apri `http://localhost:8000` in Chrome/Edge → menu → **Installa Allucina**.
 Funziona offline grazie al service worker (`sw.js` + `manifest.webmanifest`).
 
 - All'avvio sei in **modalità proiezione**: schermo nero. Muovi il mouse →
   compare il pulsante **Edit** in basso a destra (o premi `E`).
 - In **modalità modifica** appaiono la toolbar in alto, il pannello proprietà a
-  destra, la barra file in basso e il titolo **animosity - aureola** (font
+  destra, la barra file in basso e il titolo **animosity - allucina** (font
   gotico) in alto a sinistra. Premi **Fatto ✓** (o `E`) per tornare a proiettare:
   sparisce tutto, resta solo la composizione.
 
@@ -56,7 +56,7 @@ Funziona offline grazie al service worker (`sw.js` + `manifest.webmanifest`).
 - Con un mouse: **barra spaziatrice + trascina** per il pan.
 
 ### Forme e oggetti
-- Toolbar → Rettangolo, Cerchio, Ellisse, Triangolo, Barra, **Croce**, Stella.
+- Toolbar → Rettangolo, Cerchio, Ellisse, Triangolo, Barra, **Croce**.
 - **Vertici**: clicca per posare i punti, `Invio`/doppio-click chiude, `Esc`
   annulla. Doppio-click su un poligono per modificarne i vertici.
 - **Testo** gotico: aggiunge una scritta (multiriga) con font blackletter
@@ -117,7 +117,12 @@ piastrellabili). Regola i parametri nel pannello e premi **Rigenera**.
   equidistanti) e rotazione.
 - **Righe** — barre piene che riempiono lo schermo, con numero, spessore e
   rotazione.
+- **Stella** — stella piena a n **punte**, con **distanza delle punte interne**
+  dal centro (profondità degli incavi) e rotazione.
 - **Fulmini**, **Raggi**, **Anelli**.
+
+I generati sono path vettoriali (`objectCaching:false`): restano **nitidi a
+qualsiasi zoom**.
 
 ### File
 - **Autosave** automatico: riaprendo la pagina ritrovi tutto com'era.
@@ -147,7 +152,7 @@ js/viewport.js        pan/zoom infinito + gesture trackpad
 js/objects.js         forme, import, flip, luminosità, opacità, blur
 js/tiling.js          piastrella per-oggetto
 js/polygon.js         forma dai vertici + editing punti
-js/generators.js      spirale piena, righe, fulmini, raggi, anelli
+js/generators.js      spirale piena, righe, stella, fulmini, raggi, anelli
 js/persistence.js     autosave + export/import
 js/app.js             modalità, inspector, tastiera, fullscreen
 vendor/fabric.min.js  libreria (vendorizzata, offline)
@@ -165,7 +170,7 @@ build/icon.icns       icona macOS per il pacchetto Electron
 MIT — vedi [LICENSE](LICENSE).
 
 ## Estendere i generatori
-Aggiungi una voce a `AUR.Generators` in `js/generators.js`:
+Aggiungi una voce a `ALL.Generators` in `js/generators.js`:
 ```js
 mioPattern: {
   label: 'Mio pattern',

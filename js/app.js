@@ -1,7 +1,7 @@
-/* ===== Aureola — bootstrap, modalità edit/proiezione, UI, tastiera ===== */
-window.AUR = window.AUR || {};
+/* ===== Allucina — bootstrap, modalità edit/proiezione, UI, tastiera ===== */
+window.ALL = window.ALL || {};
 
-(function (AUR) {
+(function (ALL) {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', init);
@@ -9,10 +9,10 @@ window.AUR = window.AUR || {};
   function $(id) { return document.getElementById(id); }
 
   function init() {
-    AUR.state = { editMode: false, spaceHeld: false, inverted: false, autoInvert: false };
-    AUR.applyControlTheme();
+    ALL.state = { editMode: false, spaceHeld: false, inverted: false, autoInvert: false };
+    ALL.applyControlTheme();
 
-    AUR.canvas = new fabric.Canvas('stage', {
+    ALL.canvas = new fabric.Canvas('stage', {
       backgroundColor: 'transparent',   // lo sfondo nero è la pagina
       preserveObjectStacking: true,
       selection: false,
@@ -21,10 +21,10 @@ window.AUR = window.AUR || {};
       enableRetinaScaling: true
     });
 
-    AUR.initViewport();
-    AUR.resetView();
-    AUR.onViewportChanged = AUR.emitChange; // pan/zoom → autosave (vista ripristinata al reload)
-    AUR.preloadFonts(); // font gotici pronti prima di scrivere
+    ALL.initViewport();
+    ALL.resetView();
+    ALL.onViewportChanged = ALL.emitChange; // pan/zoom → autosave (vista ripristinata al reload)
+    ALL.preloadFonts(); // font gotici pronti prima di scrivere
 
     wireModes();
     wireInvert();
@@ -37,26 +37,26 @@ window.AUR = window.AUR || {};
     wireKeyboard();
     wireActivity();
 
-    AUR.loadAutosave(function () { setMode(false); });
+    ALL.loadAutosave(function () { setMode(false); });
   }
 
   // ---------- Modalità ----------
   function setMode(edit) {
-    AUR.state.editMode = edit;
+    ALL.state.editMode = edit;
     document.body.classList.toggle('mode-edit', edit);
     document.body.classList.toggle('mode-projection', !edit);
-    AUR.canvas.selection = edit;
-    AUR.canvas.skipTargetFind = !edit;
-    AUR.canvas.getObjects().forEach(function (o) {
+    ALL.canvas.selection = edit;
+    ALL.canvas.skipTargetFind = !edit;
+    ALL.canvas.getObjects().forEach(function (o) {
       if (o.isTileLayer) return;
       o.selectable = edit;
       o.evented = edit;
     });
-    if (!edit) AUR.canvas.discardActiveObject();
-    AUR.canvas.requestRenderAll();
+    if (!edit) ALL.canvas.discardActiveObject();
+    ALL.canvas.requestRenderAll();
     updateInspector();
   }
-  AUR.setMode = setMode;
+  ALL.setMode = setMode;
 
   function wireModes() {
     $('editToggle').addEventListener('click', function () { setMode(true); });
@@ -65,16 +65,16 @@ window.AUR = window.AUR || {};
 
   // ---------- Inversione colori (tutto lo schermo) ----------
   function setInvert(on) {
-    AUR.state.inverted = on;
+    ALL.state.inverted = on;
     document.body.classList.toggle('inverted', on);
     $('btnInvert').classList.toggle('active', on);
-    AUR.emitChange();
+    ALL.emitChange();
   }
-  AUR.setInvert = setInvert;
+  ALL.setInvert = setInvert;
 
   function wireInvert() {
-    $('btnInvert').addEventListener('click', function () { setInvert(!AUR.state.inverted); });
-    $('invertToggleFloat').addEventListener('click', function () { setInvert(!AUR.state.inverted); });
+    $('btnInvert').addEventListener('click', function () { setInvert(!ALL.state.inverted); });
+    $('invertToggleFloat').addEventListener('click', function () { setInvert(!ALL.state.inverted); });
   }
 
   // ---------- Inverti automaticamente (strobo a intervallo regolabile) ----------
@@ -82,22 +82,22 @@ window.AUR = window.AUR || {};
 
   function setAutoInvert(on) {
     clearInterval(autoInvertTimer);
-    AUR.state.autoInvert = on;
+    ALL.state.autoInvert = on;
     $('btnAutoInvert').classList.toggle('active', on);
     $('autoInvertToggleFloat').classList.toggle('active', on);
     if (on) {
       const sec = Math.max(0.1, Math.min(10, parseFloat($('invertRate').value) || 1));
-      autoInvertTimer = setInterval(function () { setInvert(!AUR.state.inverted); }, sec * 1000);
+      autoInvertTimer = setInterval(function () { setInvert(!ALL.state.inverted); }, sec * 1000);
     }
   }
-  AUR.setAutoInvert = setAutoInvert;
+  ALL.setAutoInvert = setAutoInvert;
 
   function wireAutoInvert() {
-    $('btnAutoInvert').addEventListener('click', function () { setAutoInvert(!AUR.state.autoInvert); });
-    $('autoInvertToggleFloat').addEventListener('click', function () { setAutoInvert(!AUR.state.autoInvert); });
+    $('btnAutoInvert').addEventListener('click', function () { setAutoInvert(!ALL.state.autoInvert); });
+    $('autoInvertToggleFloat').addEventListener('click', function () { setAutoInvert(!ALL.state.autoInvert); });
     // Cambiare l'intervallo mentre è attivo lo riavvia con il nuovo valore.
     $('invertRate').addEventListener('change', function () {
-      if (AUR.state.autoInvert) setAutoInvert(true);
+      if (ALL.state.autoInvert) setAutoInvert(true);
     });
   }
 
@@ -117,121 +117,121 @@ window.AUR = window.AUR || {};
   // ---------- Toolbar ----------
   function wireToolbar() {
     document.querySelectorAll('#toolbar [data-add]').forEach(function (b) {
-      b.addEventListener('click', function () { AUR.addShape(b.dataset.add); });
+      b.addEventListener('click', function () { ALL.addShape(b.dataset.add); });
     });
     document.querySelectorAll('#toolbar [data-gen]').forEach(function (b) {
-      b.addEventListener('click', function () { AUR.addGenerated(b.dataset.gen); updateInspector(); });
+      b.addEventListener('click', function () { ALL.addGenerated(b.dataset.gen); updateInspector(); });
     });
-    $('btnText').addEventListener('click', function () { AUR.addText(); updateInspector(); });
-    $('btnVertex').addEventListener('click', function () { AUR.startVertexTool(); });
+    $('btnText').addEventListener('click', function () { ALL.addText(); updateInspector(); });
+    $('btnVertex').addEventListener('click', function () { ALL.startVertexTool(); });
     $('btnSvg').addEventListener('click', function () { $('fileSvg').click(); });
     $('btnImg').addEventListener('click', function () { $('fileImg').click(); });
     $('btnFullscreen').addEventListener('click', toggleFullscreen);
   }
 
   // ---------- Inspector ----------
-  function activeObj() { return AUR.canvas.getActiveObject(); }
+  function activeObj() { return ALL.canvas.getActiveObject(); }
 
   function wireInspector() {
-    on('pOpacity', 'input', function (v) { AUR.setOpacity(activeObj(), v); });
-    on('pLum', 'input', function (v) { AUR.setLuminosity(activeObj(), v); });
-    on('pBlur', 'input', function (v) { AUR.setBlur(activeObj(), v); });
+    on('pOpacity', 'input', function (v) { ALL.setOpacity(activeObj(), v); });
+    on('pLum', 'input', function (v) { ALL.setLuminosity(activeObj(), v); });
+    on('pBlur', 'input', function (v) { ALL.setBlur(activeObj(), v); });
     ['pOpacity', 'pLum', 'pBlur'].forEach(function (id) {
-      $(id).addEventListener('change', AUR.emitChange);
+      $(id).addEventListener('change', ALL.emitChange);
     });
 
     $('pColor').addEventListener('input', function () {
       const o = activeObj(); if (!o) return;
-      AUR.setColor(o, $('pColor').value);
+      ALL.setColor(o, $('pColor').value);
     });
-    $('pColor').addEventListener('change', AUR.emitChange);
+    $('pColor').addEventListener('change', ALL.emitChange);
     $('pColorReset').addEventListener('click', function () {
       const o = activeObj(); if (!o) return;
       $('pColor').value = '#ffffff';
-      AUR.setColor(o, '#ffffff');
-      AUR.emitChange();
+      ALL.setColor(o, '#ffffff');
+      ALL.emitChange();
     });
 
-    $('pFlipX').addEventListener('click', function () { AUR.flip('x'); });
-    $('pFlipY').addEventListener('click', function () { AUR.flip('y'); });
+    $('pFlipX').addEventListener('click', function () { ALL.flip('x'); });
+    $('pFlipY').addEventListener('click', function () { ALL.flip('y'); });
 
     $('pObjInvert').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
-      AUR.setObjectInvert(o, $('pObjInvert').checked);
-      AUR.emitChange();
+      ALL.setObjectInvert(o, $('pObjInvert').checked);
+      ALL.emitChange();
     });
 
     $('pObjBW').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
-      AUR.setObjectBW(o, $('pObjBW').checked);
-      AUR.emitChange();
+      ALL.setObjectBW(o, $('pObjBW').checked);
+      ALL.emitChange();
     });
 
     $('pTile').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
-      if ($('pTile').checked) AUR.enableTile(o, parseFloat($('pGap').value) || 0);
-      else AUR.removeTile(o);
+      if ($('pTile').checked) ALL.enableTile(o, parseFloat($('pGap').value) || 0);
+      else ALL.removeTile(o);
       $('pTileParams').hidden = !$('pTile').checked;
-      AUR.emitChange();
+      ALL.emitChange();
     });
     $('pGap').addEventListener('input', function () {
       const o = activeObj(); if (!o) return;
       o.tileGap = parseFloat($('pGap').value) || 0;
-      if (o.tileMode) AUR.updateTile(o);
+      if (o.tileMode) ALL.updateTile(o);
     });
-    $('pGap').addEventListener('change', AUR.emitChange);
+    $('pGap').addEventListener('change', ALL.emitChange);
 
     ['pTileOffX', 'pTileOffY'].forEach(function (id) {
       $(id).addEventListener('input', function () {
         const o = activeObj(); if (!o) return;
         const frac = parseFloat($(id).value) / 100;
         if (id === 'pTileOffX') o.tileOffX = frac; else o.tileOffY = frac;
-        if (o.tileMode) AUR.updateTile(o);
+        if (o.tileMode) ALL.updateTile(o);
       });
-      $(id).addEventListener('change', AUR.emitChange);
+      $(id).addEventListener('change', ALL.emitChange);
     });
     $('pTileFlipH').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
       o.tileFlipAltH = $('pTileFlipH').checked;
-      if (o.tileMode) AUR.updateTile(o);
-      AUR.emitChange();
+      if (o.tileMode) ALL.updateTile(o);
+      ALL.emitChange();
     });
     $('pTileFlipV').addEventListener('change', function () {
       const o = activeObj(); if (!o) return;
       o.tileFlipAltV = $('pTileFlipV').checked;
-      if (o.tileMode) AUR.updateTile(o);
-      AUR.emitChange();
+      if (o.tileMode) ALL.updateTile(o);
+      ALL.emitChange();
     });
 
-    $('pDup').addEventListener('click', function () { AUR.duplicateSelected(); });
-    $('pDel').addEventListener('click', function () { AUR.deleteSelected(); });
+    $('pDup').addEventListener('click', function () { ALL.duplicateSelected(); });
+    $('pDel').addEventListener('click', function () { ALL.deleteSelected(); });
 
     $('genApply').addEventListener('click', applyGen);
 
     // Testo gotico
     const sel = $('pFont');
-    AUR.GOTHIC_FONTS.forEach(function (f) {
+    ALL.GOTHIC_FONTS.forEach(function (f) {
       const opt = document.createElement('option');
       opt.value = f.css; opt.textContent = f.label;
       opt.style.fontFamily = "'" + f.css + "'";
       sel.appendChild(opt);
     });
     $('pText').addEventListener('input', function () {
-      AUR.setText(activeObj(), $('pText').value);
+      ALL.setText(activeObj(), $('pText').value);
     });
-    $('pText').addEventListener('change', AUR.emitChange);
+    $('pText').addEventListener('change', ALL.emitChange);
     $('pFont').addEventListener('change', function () {
-      AUR.setFont(activeObj(), $('pFont').value); AUR.emitChange();
+      ALL.setFont(activeObj(), $('pFont').value); ALL.emitChange();
     });
     $('pFontSize').addEventListener('input', function () {
       const o = activeObj(); if (!o) return;
       o.set('fontSize', parseFloat($('pFontSize').value));
       if (o.initDimensions) o.initDimensions();
       o.setCoords();
-      AUR.canvas.requestRenderAll();
-      if (o.tileMode) AUR.updateTile(o);
+      ALL.canvas.requestRenderAll();
+      if (o.tileMode) ALL.updateTile(o);
     });
-    $('pFontSize').addEventListener('change', AUR.emitChange);
+    $('pFontSize').addEventListener('change', ALL.emitChange);
   }
 
   function on(id, evt, fn) {
@@ -260,23 +260,23 @@ window.AUR = window.AUR || {};
     $('pTileFlipH').checked = !!o.tileFlipAltH;
     $('pTileFlipV').checked = !!o.tileFlipAltV;
 
-    if (o.genType && AUR.Generators[o.genType]) { gen.hidden = false; buildGenControls(o); }
+    if (o.genType && ALL.Generators[o.genType]) { gen.hidden = false; buildGenControls(o); }
     else gen.hidden = true;
 
     if (o.type === 'textbox') {
       txt.hidden = false;
       $('pText').value = o.text || '';
-      $('pFont').value = o.fontFamily || AUR.GOTHIC_FONTS[0].css;
+      $('pFont').value = o.fontFamily || ALL.GOTHIC_FONTS[0].css;
       $('pFontSize').value = o.fontSize || 130;
     } else { txt.hidden = true; }
   }
 
   function buildGenControls(o) {
-    const g = AUR.Generators[o.genType];
+    const g = ALL.Generators[o.genType];
     $('genTitle').textContent = 'Generatore · ' + g.label;
     const box = $('genControls');
     box.innerHTML = '';
-    const params = o.genParams || AUR.genDefaults(o.genType);
+    const params = o.genParams || ALL.genDefaults(o.genType);
     g.params.forEach(function (pr) {
       const val = params[pr.key] != null ? params[pr.key] : pr.default;
       const row = document.createElement('label');
@@ -295,7 +295,7 @@ window.AUR = window.AUR || {};
     document.querySelectorAll('#genControls input[data-k]').forEach(function (inp) {
       params[inp.dataset.k] = parseFloat(inp.value);
     });
-    AUR.regenerate(o, params);
+    ALL.regenerate(o, params);
     updateInspector();
   }
 
@@ -310,9 +310,9 @@ window.AUR = window.AUR || {};
   function renderObjectList() {
     const listEl = $('objList');
     const active = {};
-    AUR.canvas.getActiveObjects().forEach(function (o) { active[o.uid] = true; });
+    ALL.canvas.getActiveObjects().forEach(function (o) { active[o.uid] = true; });
 
-    const objs = AUR.canvas.getObjects().filter(function (o) { return !o.isTileLayer; });
+    const objs = ALL.canvas.getObjects().filter(function (o) { return !o.isTileLayer; });
     $('objListCount').textContent = objs.length ? '(' + objs.length + ')' : '';
     listEl.innerHTML = '';
 
@@ -348,9 +348,9 @@ window.AUR = window.AUR || {};
       down.addEventListener('click', function (e) { e.stopPropagation(); moveObjectZ(o, 'down'); });
 
       row.addEventListener('click', function () {
-        AUR.canvas.discardActiveObject();
-        AUR.canvas.setActiveObject(o);
-        AUR.canvas.requestRenderAll();
+        ALL.canvas.discardActiveObject();
+        ALL.canvas.setActiveObject(o);
+        ALL.canvas.requestRenderAll();
         updateInspector();
       });
       listEl.appendChild(row);
@@ -359,19 +359,19 @@ window.AUR = window.AUR || {};
 
   // Sposta un oggetto di un livello nello z-order, aggiornando canvas + lista live.
   function moveObjectZ(o, dir) {
-    AUR.canvas.setActiveObject(o);
-    AUR.zOrder(dir === 'up' ? 'front' : 'back');
+    ALL.canvas.setActiveObject(o);
+    ALL.zOrder(dir === 'up' ? 'front' : 'back');
     updateInspector(); // ridisegna la lista con il nuovo ordine e la selezione
   }
 
   function niceName(o) {
-    if (o.genType && AUR.Generators[o.genType]) return AUR.Generators[o.genType].label;
+    if (o.genType && ALL.Generators[o.genType]) return ALL.Generators[o.genType].label;
     const map = {
       rect: 'Rettangolo', circle: 'Cerchio', ellipse: 'Ellisse', triangle: 'Triangolo',
       bar: 'Barra', cross: 'Croce', star: 'Stella', polygon: 'Poligono',
       svg: 'SVG', image: 'Immagine', text: 'Testo'
     };
-    return map[o.aureolaType] || 'Oggetto';
+    return map[o.allucinaType] || 'Oggetto';
   }
 
   // ---------- File ----------
@@ -379,45 +379,45 @@ window.AUR = window.AUR || {};
     $('fileSvg').addEventListener('change', function (e) {
       const f = e.target.files[0]; if (!f) return;
       const r = new FileReader();
-      r.onload = function () { AUR.addSVGFromString(r.result); };
+      r.onload = function () { ALL.addSVGFromString(r.result); };
       r.readAsText(f);
       e.target.value = '';
     });
     $('fileImg').addEventListener('change', function (e) {
       const f = e.target.files[0]; if (!f) return;
       const r = new FileReader();
-      r.onload = function () { AUR.addImageFromDataURL(r.result); };
+      r.onload = function () { ALL.addImageFromDataURL(r.result); };
       r.readAsDataURL(f);
       e.target.value = '';
     });
-    $('btnNew').addEventListener('click', function () { AUR.newProject(); updateInspector(); });
-    $('btnExport').addEventListener('click', function () { AUR.exportProject(); });
+    $('btnNew').addEventListener('click', function () { ALL.newProject(); updateInspector(); });
+    $('btnExport').addEventListener('click', function () { ALL.exportProject(); });
     $('btnImport').addEventListener('click', function () { $('fileProject').click(); });
     $('fileProject').addEventListener('change', function (e) {
       const f = e.target.files[0]; if (!f) return;
-      AUR.importProject(f, function () { setMode(AUR.state.editMode); updateInspector(); });
+      ALL.importProject(f, function () { setMode(ALL.state.editMode); updateInspector(); });
       e.target.value = '';
     });
   }
 
   // ---------- Eventi canvas ----------
   function wireCanvasEvents() {
-    const c = AUR.canvas;
+    const c = ALL.canvas;
     c.on('selection:created', updateInspector);
     c.on('selection:updated', updateInspector);
     c.on('selection:cleared', updateInspector);
     c.on('object:modified', function (e) {
       const o = e.target;
-      if (o && o.tileMode) AUR.updateTile(o);
-      AUR.emitChange();
+      if (o && o.tileMode) ALL.updateTile(o);
+      ALL.emitChange();
     });
-    c.on('object:added', function () { AUR.keepTilesAtBack(); renderObjectList(); AUR.emitChange(); });
-    c.on('object:removed', function () { renderObjectList(); AUR.emitChange(); });
+    c.on('object:added', function () { ALL.keepTilesAtBack(); renderObjectList(); ALL.emitChange(); });
+    c.on('object:removed', function () { renderObjectList(); ALL.emitChange(); });
     c.on('mouse:dblclick', function (opt) {
-      if (!AUR.state.editMode || AUR.isVertexMode()) return;
+      if (!ALL.state.editMode || ALL.isVertexMode()) return;
       const o = opt.target;
       if (o && (o.type === 'polygon' || o.type === 'polyline')) {
-        AUR.togglePointEditing(o);
+        ALL.togglePointEditing(o);
       }
     });
   }
@@ -426,27 +426,27 @@ window.AUR = window.AUR || {};
   function wireKeyboard() {
     window.addEventListener('keydown', function (e) {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-      if (AUR.isVertexMode()) return; // Esc/Enter gestiti dal tool vertici
+      if (ALL.isVertexMode()) return; // Esc/Enter gestiti dal tool vertici
 
       const k = e.key;
-      if (k === 'e' || k === 'E') { e.preventDefault(); setMode(!AUR.state.editMode); return; }
+      if (k === 'e' || k === 'E') { e.preventDefault(); setMode(!ALL.state.editMode); return; }
       if (k === 'f' || k === 'F') { e.preventDefault(); toggleFullscreen(); return; }
       if (k === 'i' || k === 'I') {
         e.preventDefault();
-        if (e.shiftKey) setAutoInvert(!AUR.state.autoInvert);
-        else setInvert(!AUR.state.inverted);
+        if (e.shiftKey) setAutoInvert(!ALL.state.autoInvert);
+        else setInvert(!ALL.state.inverted);
         return;
       }
-      if (k === ' ') { AUR.state.spaceHeld = true; e.preventDefault(); return; }
+      if (k === ' ') { ALL.state.spaceHeld = true; e.preventDefault(); return; }
 
-      if (!AUR.state.editMode) return;
+      if (!ALL.state.editMode) return;
 
       const o = activeObj();
-      if ((k === 'Delete' || k === 'Backspace') && o) { e.preventDefault(); AUR.deleteSelected(); return; }
-      if ((e.metaKey || e.ctrlKey) && (k === 'd' || k === 'D')) { e.preventDefault(); AUR.duplicateSelected(); return; }
-      if (k === '[') { e.preventDefault(); AUR.zOrder(e.shiftKey ? 'toBack' : 'back'); renderObjectList(); return; }
-      if (k === ']') { e.preventDefault(); AUR.zOrder(e.shiftKey ? 'toFront' : 'front'); renderObjectList(); return; }
-      if (k === 'Escape') { AUR.canvas.discardActiveObject(); AUR.canvas.requestRenderAll(); updateInspector(); return; }
+      if ((k === 'Delete' || k === 'Backspace') && o) { e.preventDefault(); ALL.deleteSelected(); return; }
+      if ((e.metaKey || e.ctrlKey) && (k === 'd' || k === 'D')) { e.preventDefault(); ALL.duplicateSelected(); return; }
+      if (k === '[') { e.preventDefault(); ALL.zOrder(e.shiftKey ? 'toBack' : 'back'); renderObjectList(); return; }
+      if (k === ']') { e.preventDefault(); ALL.zOrder(e.shiftKey ? 'toFront' : 'front'); renderObjectList(); return; }
+      if (k === 'Escape') { ALL.canvas.discardActiveObject(); ALL.canvas.requestRenderAll(); updateInspector(); return; }
 
       // Frecce → sposta l'oggetto selezionato.
       if (o && k.indexOf('Arrow') === 0) {
@@ -457,13 +457,13 @@ window.AUR = window.AUR || {};
         if (k === 'ArrowUp') o.top -= step;
         if (k === 'ArrowDown') o.top += step;
         o.setCoords();
-        if (o.tileMode) AUR.updateTile(o);
-        AUR.canvas.requestRenderAll();
-        AUR.emitChange();
+        if (o.tileMode) ALL.updateTile(o);
+        ALL.canvas.requestRenderAll();
+        ALL.emitChange();
       }
     });
     window.addEventListener('keyup', function (e) {
-      if (e.key === ' ') AUR.state.spaceHeld = false;
+      if (e.key === ' ') ALL.state.spaceHeld = false;
     });
   }
 
@@ -479,4 +479,4 @@ window.AUR = window.AUR || {};
     }
   }
 
-})(window.AUR);
+})(window.ALL);
