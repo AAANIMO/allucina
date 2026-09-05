@@ -35,6 +35,8 @@ window.AUR = window.AUR || {};
       // Riapplica i filtri delle immagini e ricostruisci le piastrelle.
       AUR.canvas.getObjects().forEach(function (o) {
         if (o.type === 'image' && o.filters && o.filters.length) o.applyFilters();
+        // I path generati restano vettoriali (nitidi a ogni zoom).
+        if (o.genType) o.set({ objectCaching: false });
       });
       AUR.rebuildAllTiles();
       AUR.canvas.requestRenderAll();

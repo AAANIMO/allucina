@@ -64,8 +64,6 @@ window.AUR = window.AUR || {};
         obj = new fabric.Rect({ width: 320, height: 14, fill: WHITE }); break;
       case 'cross':
         obj = new fabric.Polygon(crossPoints(160, 24), { fill: WHITE }); break;
-      case 'star':
-        obj = new fabric.Polygon(starPoints(5, 110, 46), { fill: WHITE }); break;
       default:
         obj = new fabric.Rect({ width: 160, height: 160, fill: WHITE });
     }
@@ -80,17 +78,6 @@ window.AUR = window.AUR || {};
       { x: h, y: w }, { x: w, y: w }, { x: w, y: h }, { x: -w, y: h },
       { x: -w, y: w }, { x: -h, y: w }, { x: -h, y: -w }, { x: -w, y: -w }
     ];
-  }
-
-  function starPoints(n, R, r) {
-    const pts = [];
-    const step = Math.PI / n;
-    for (let i = 0; i < 2 * n; i++) {
-      const rad = i % 2 === 0 ? R : r;
-      const a = i * step - Math.PI / 2;
-      pts.push({ x: Math.cos(a) * rad, y: Math.sin(a) * rad });
-    }
-    return pts;
   }
 
   // ---- Import immagine ----

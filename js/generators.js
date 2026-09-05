@@ -173,6 +173,32 @@ window.AUR = window.AUR || {};
         }
         return { d: d.trim(), stroke: '', fill: '#fff', strokeWidth: 0 };
       }
+    },
+
+    star: {
+      label: 'Stella',
+      params: [
+        { key: 'points', label: 'Punte', min: 3, max: 24, step: 1, default: 5 },
+        // distanza delle punte INTERNE dal centro, come frazione del raggio esterno
+        { key: 'inner', label: 'Punte interne', min: 0.1, max: 0.9, step: 0.02, default: 0.42 },
+        { key: 'rotation', label: 'Rotazione', min: 0, max: 360, step: 5, default: 0 }
+      ],
+      // Stella piena a n punte: alterna raggio esterno R e interno R·inner.
+      build: function (p, S) {
+        const R = S * 0.46;
+        const n = Math.max(3, Math.round(p.points));
+        const ri = R * Math.min(0.95, Math.max(0.05, p.inner));
+        const rot = (p.rotation || 0) * Math.PI / 180;
+        const step = Math.PI / n;
+        let d = '';
+        for (let i = 0; i < 2 * n; i++) {
+          const rad = i % 2 === 0 ? R : ri;
+          const a = i * step - Math.PI / 2 + rot;
+          const x = Math.cos(a) * rad, y = Math.sin(a) * rad;
+          d += (i === 0 ? 'M ' : ' L ') + r(x) + ' ' + r(y);
+        }
+        return { d: d + ' Z', stroke: '', fill: '#fff', strokeWidth: 0 };
+      }
     }
   };
 
@@ -194,7 +220,9 @@ window.AUR = window.AUR || {};
       strokeWidth: res.strokeWidth !== undefined ? res.strokeWidth : 3,
       strokeLineCap: 'round', strokeLineJoin: 'round',
       fillRule: 'nonzero',
-      originX: 'center', originY: 'center'
+      originX: 'center', originY: 'center',
+      // niente cache bitmap: il path resta vettoriale e nitido a qualsiasi zoom
+      objectCaching: false
     }, keep || {}));
     path.aureolaType = 'generated';
     path.genType = type;

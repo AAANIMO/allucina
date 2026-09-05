@@ -71,7 +71,8 @@ body.mode-projection:not(.active) { cursor: none; }
 .invert-toggle-float { right: 84px; }
 .auto-invert-toggle-float { right: 158px; }
 
-.tb-rate {
+.tb-rate,
+.tb-star {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -80,7 +81,9 @@ body.mode-projection:not(.active) { cursor: none; }
   -webkit-user-select: none;
   user-select: none;
 }
-.tb-rate input[type="number"] {
+.tb-star { margin-left: 2px; }
+.tb-rate input[type="number"],
+.tb-star input[type="number"] {
   width: 46px;
   font-family: inherit;
   font-size: 13px;
