@@ -382,3 +382,104 @@ body.mode-edit .inspector { transform: translateX(0); }
 .obj-list::-webkit-scrollbar { width: 8px; }
 .inspector::-webkit-scrollbar-thumb,
 .obj-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; }
+
+/* ===== Splash / schermata iniziale ===== */
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 1;
+  transition: opacity 500ms ease;
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+body.splash-done #splash { display: none; }
+
+.splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+/* crest: SVG colorato di bianco via mask (eredita così qualsiasi colore) */
+.splash-crest {
+  width: min(38vh, 260px);
+  height: min(38vh, 260px);
+  background-color: #f3f3f5;
+  -webkit-mask: url('../assets/crest.svg') no-repeat center / contain;
+  mask: url('../assets/crest.svg') no-repeat center / contain;
+  opacity: 0;
+  transform: scale(0.94);
+  animation: splashIn 1000ms cubic-bezier(.2,.7,.2,1) 150ms both;
+}
+
+.splash-title {
+  margin: 26px 0 0;
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(44px, 8vh, 76px);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: lowercase;
+  color: #f3f3f5;
+  opacity: 0;
+  animation: splashIn 700ms ease 1100ms both;
+}
+
+.splash-sub {
+  margin: 12px 0 0;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  animation: splashIn 700ms ease 1600ms both;
+}
+
+.splash-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 38px;
+  opacity: 0;
+  animation: splashIn 700ms ease 2100ms both;
+}
+
+.splash-btn {
+  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+.splash-btn:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }
+.splash-btn.primary {
+  background: #f3f3f5;
+  color: #0a0a0c;
+  border-color: #f3f3f5;
+  font-weight: 600;
+}
+.splash-btn.primary:hover { background: #fff; }
+
+@keyframes splashIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* il crest parte solo da scala (senza slide) */
+.splash-crest { animation-name: splashCrestIn; }
+@keyframes splashCrestIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-crest, .splash-title, .splash-sub, .splash-actions { animation-duration: 1ms; animation-delay: 0ms; }
+}

@@ -1,5 +1,5 @@
 /* Service worker Allucina — cache dell'app shell per uso offline */
-const CACHE = 'allucina-v1';
+const CACHE = 'allucina-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -19,7 +19,8 @@ const ASSETS = [
   './assets/fonts/UnifrakturMaguntia.woff2',
   './assets/icon-192.png',
   './assets/icon-512.png',
-  './assets/icon-180.png'
+  './assets/icon-180.png',
+  './assets/crest.svg'
 ];
 
 self.addEventListener('install', (e) => {

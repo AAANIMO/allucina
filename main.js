@@ -1,6 +1,6 @@
 /* Allucina — processo principale Electron.
    Carica l'app statica (index.html) in una finestra nativa. */
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const path = require('path');
 
 let win = null;
@@ -21,6 +21,14 @@ function createWindow() {
   });
 
   win.loadFile('index.html');
+
+  // I link esterni (website, donate) si aprono nel browser di sistema,
+  // non in una nuova finestra dell'app.
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:/.test(url)) { shell.openExternal(url); }
+    return { action: 'deny' };
+  });
+
   win.on('closed', () => { win = null; });
 }
 

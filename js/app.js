@@ -36,8 +36,32 @@ window.ALL = window.ALL || {};
     wireCanvasEvents();
     wireKeyboard();
     wireActivity();
+    wireSplash();
 
     ALL.loadAutosave(function () { setMode(false); });
+  }
+
+  // ---------- Splash / schermata iniziale ----------
+  // Apre un URL nel browser esterno (in Electron via handler nel main process,
+  // nel browser con una nuova scheda).
+  function openExternal(url) {
+    if (!url) return;
+    window.open(url, '_blank', 'noopener');
+  }
+
+  function dismissSplash() {
+    const s = $('splash');
+    if (!s) return;
+    s.classList.add('hide');
+    setTimeout(function () { document.body.classList.add('splash-done'); }, 520);
+  }
+
+  function wireSplash() {
+    const start = $('splashStart');
+    if (start) start.addEventListener('click', dismissSplash);
+    document.querySelectorAll('#splash [data-url]').forEach(function (b) {
+      b.addEventListener('click', function () { openExternal(b.dataset.url); });
+    });
   }
 
   // ---------- Modalità ----------
