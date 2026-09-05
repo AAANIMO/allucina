@@ -1,0 +1,46 @@
+{
+  "name": "aureola",
+  "version": "1.0.0",
+  "description": "Aureola — luce da studio e proiezione per animosity.",
+  "author": "Tommaso Ascari",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.animosity.aureola",
+    "productName": "Aureola",
+    "files": [
+      "index.html",
+      "main.js",
+      "css/**",
+      "js/**",
+      "vendor/**",
+      "assets/**",
+      "manifest.webmanifest",
+      "sw.js"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.graphics-design",
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] }
+      ]
+    },
+    "win": {
+      "icon": "assets/icon-512.png",
+      "target": ["nsis"]
+    }
+  }
+}

@@ -3,3 +3,7 @@
 
 # Stato locale runtime (l'autosave vive in localStorage del browser)
 *.log
+
+# Electron / build
+node_modules/
+release/

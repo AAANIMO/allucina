@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Aureola</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Aureola" />
+  <link rel="apple-touch-icon" href="assets/icon-180.png" />
+  <link rel="icon" type="image/png" href="assets/icon-192.png" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="mode-projection">
@@ -12,7 +19,7 @@
   <canvas id="stage"></canvas>
 
   <!-- Titolo app (solo in edit, font gotico) -->
-  <div id="appTitle" class="app-title chrome">animosity - aureola</div>
+  <div id="appTitle" class="app-title chrome">animosity<span class="title-dot">・</span>aureola</div>
 
   <!-- Pulsanti flottanti (nascosti fino all'hover in proiezione) -->
   <button id="autoInvertToggleFloat" class="edit-toggle auto-invert-toggle-float" title="Inverti automaticamente (Shift+I)">⏱ Auto</button>
@@ -181,5 +188,13 @@
   <script src="js/generators.js"></script>
   <script src="js/persistence.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    /* Registra il service worker per l'installazione PWA / uso offline */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW non registrato:', e));
+      });
+    }
+  </script>
 </body>
 </html>

@@ -111,18 +111,32 @@ body.inverted .vertex-hint {
   top: 0;
   left: 0;
   z-index: 45;
-  padding: 18px 56px 48px 22px;
+  /* altezza = mezzeria allineata al centro verticale della toolbar (top 12px, ~112px alta) */
+  height: 136px;
+  display: flex;
+  align-items: center;
+  padding: 0 100px 0 22px;
   font-family: 'UnifrakturMaguntia', serif;
   font-size: 30px;
   line-height: 1;
   text-transform: lowercase;
   color: var(--text);
   pointer-events: none;
-  /* sfumatura nera dietro il titolo per la leggibilità su qualsiasi sfondo */
-  background: radial-gradient(100% 150% at 26% 26%,
-    rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.82) 46%, rgba(0, 0, 0, 0.4) 68%, rgba(0, 0, 0, 0) 85%);
+  background: none;
+  /* alone scuro sfocato che avvolge le lettere (leggibilità su qualsiasi sfondo) */
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.95),
+    0 0 12px rgba(0, 0, 0, 0.9),
+    0 0 22px rgba(0, 0, 0, 0.75);
 }
 body.mode-edit .app-title.chrome { opacity: 0.85; }
+/* punto centrale (katakana middle dot ・) tra le due parole */
+.app-title .title-dot {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  font-size: 0.7em;
+  vertical-align: middle;
+  margin: 0 0.06em;
+}
 
 /* ===== Chrome (toolbar, inspector, filebar) — visibile solo in edit ===== */
 .chrome {

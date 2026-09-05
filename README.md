@@ -10,6 +10,39 @@ le hai messe: è quello che proietti sul soggetto.
 Apri `index.html` in un browser (doppio click). Funziona **offline**, nessun
 server o installazione: Fabric.js è già incluso in `vendor/`.
 
+## Installare come app
+
+### App desktop (Electron) — consigliata
+
+App nativa con finestra propria, icona nel dock e controllo fullscreen/kiosk.
+
+```bash
+npm install        # installa Electron (una volta)
+npm start          # avvia Aureola in una finestra nativa
+```
+
+Per creare l'eseguibile distribuibile:
+
+```bash
+npm run dist:mac   # genera un .dmg in release/  (Apple Silicon + Intel)
+npm run dist:win   # genera un installer .exe in release/ (da Windows)
+```
+
+Il `.dmg` prodotto in `release/` si installa trascinando **Aureola** nella
+cartella Applicazioni. È **unsigned** (nessun certificato Apple): al primo
+avvio fai **click destro → Apri** per bypassare Gatekeeper.
+
+### PWA (dal browser)
+
+In alternativa, servendo la cartella via http la si può installare come PWA:
+
+```bash
+python3 -m http.server 8000
+```
+
+Apri `http://localhost:8000` in Chrome/Edge → menu → **Installa Aureola**.
+Funziona offline grazie al service worker (`sw.js` + `manifest.webmanifest`).
+
 - All'avvio sei in **modalità proiezione**: schermo nero. Muovi il mouse →
   compare il pulsante **Edit** in basso a destra (o premi `E`).
 - In **modalità modifica** appaiono la toolbar in alto, il pannello proprietà a
@@ -119,7 +152,17 @@ js/persistence.js     autosave + export/import
 js/app.js             modalità, inspector, tastiera, fullscreen
 vendor/fabric.min.js  libreria (vendorizzata, offline)
 assets/fonts/         font gotici (woff2, offline)
+assets/icon-*.png     icone app ("a" gotica su taglio obliquo invertito)
+main.js               processo principale Electron
+package.json          config Electron + electron-builder
+manifest.webmanifest  PWA manifest
+sw.js                 service worker (cache offline PWA)
+build/icon.icns       icona macOS per il pacchetto Electron
 ```
+
+## Licenza
+
+MIT — vedi [LICENSE](LICENSE).
 
 ## Estendere i generatori
 Aggiungi una voce a `AUR.Generators` in `js/generators.js`:
